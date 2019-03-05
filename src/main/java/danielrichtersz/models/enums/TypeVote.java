@@ -1,4 +1,4 @@
-package models.enums;
+package danielrichtersz.models.enums;
 
 public enum TypeVote {
     Upvote,

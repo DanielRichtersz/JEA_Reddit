@@ -1,7 +1,7 @@
-package models;
+package danielrichtersz.models;
 
-import models.components.OwnerContainer;
-import models.enums.TypeVote;
+import danielrichtersz.models.components.OwnerContainer;
+import danielrichtersz.models.enums.TypeVote;
 
 public class Vote {
     private Post post;

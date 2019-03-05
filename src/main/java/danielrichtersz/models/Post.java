@@ -1,22 +1,22 @@
-package models;
+package danielrichtersz.models;
 
-import models.components.OwnerContainer;
-import models.components.ReactionContainer;
-import models.components.VoteContainer;
+import danielrichtersz.models.components.OwnerContainer;
+import danielrichtersz.models.components.ReactionContainer;
+import danielrichtersz.models.components.VoteContainer;
 
-import javax.persistence.Entity;
+public class Post {
 
-@Entity
-public class Comment extends ReactionContainer {
-    private String comment;
-
+    private String content;
     private ReactionContainer reactionContainer;
     private OwnerContainer ownerContainer;
     private VoteContainer voteContainer;
 
+    public Post() {
 
-    public Comment(String comment, Redditor owner) {
-        this.comment = comment;
+    }
+
+    public Post(String content, Redditor owner) {
+        this.content = content;
         this.reactionContainer = new ReactionContainer();
         this.ownerContainer = new OwnerContainer(owner);
         this.voteContainer = new VoteContainer();

@@ -1,8 +1,7 @@
-package models.components;
+package danielrichtersz.models.components;
 
-import models.Comment;
+import danielrichtersz.models.Comment;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class ReactionContainer {

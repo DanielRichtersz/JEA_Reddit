@@ -1,6 +1,6 @@
-package models.components;
+package danielrichtersz.models.components;
 
-import models.Vote;
+import danielrichtersz.models.Vote;
 
 import java.util.ArrayList;
 import java.util.List;

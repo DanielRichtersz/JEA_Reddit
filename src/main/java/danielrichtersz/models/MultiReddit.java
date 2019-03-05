@@ -1,10 +1,8 @@
-package models;
+package danielrichtersz.models;
 
-import javax.persistence.Entity;
 import java.util.ArrayList;
 import java.util.List;
 
-@Entity
 public class MultiReddit {
     private String name;
     private List<Subreddit> subreddits = new ArrayList<>();

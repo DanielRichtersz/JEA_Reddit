@@ -1,10 +1,7 @@
-package models;
+package danielrichtersz.models;
 
-import javax.persistence.Entity;
-import java.util.ArrayList;
 import java.util.List;
 
-@Entity
 public class Subreddit {
     private String name;
 

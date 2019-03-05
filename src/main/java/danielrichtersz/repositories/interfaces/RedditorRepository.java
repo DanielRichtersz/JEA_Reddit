@@ -1,6 +1,6 @@
-package repositories.interfaces;
+package danielrichtersz.repositories.interfaces;
 
-import models.Redditor;
+import danielrichtersz.models.Redditor;
 import java.util.List;
 import org.springframework.data.repository.CrudRepository;
 

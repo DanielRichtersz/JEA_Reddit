@@ -1,20 +1,15 @@
-package application;
+package danielrichtersz;
 
-import models.Redditor;
+import danielrichtersz.models.Redditor;
+import danielrichtersz.repositories.interfaces.RedditorRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
-import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.ComponentScan;
-import org.springframework.context.annotation.Configuration;
-import repositories.interfaces.RedditorRepository;
 
-@Configuration
-@EnableAutoConfiguration
-@ComponentScan
+@SpringBootApplication
 public class App {
 
     private static final Logger log = LoggerFactory.getLogger(App.class);
@@ -51,9 +46,9 @@ public class App {
 
 
             // fetch by last name
-            log.info("Customer found with findByUserName('Bauer'):");
+            log.info("Customer found with findByUserName('username2'):");
             log.info("--------------------------------------------");
-            repository.findByUserName("username1").forEach(username1 -> {
+            repository.findByUserName("username2").forEach(username1 -> {
                 log.info(username1.toString());
             });
             log.info("");

@@ -1,6 +1,6 @@
-package models.components;
+package danielrichtersz.models.components;
 
-import models.Redditor;
+import danielrichtersz.models.Redditor;
 
 public class OwnerContainer {
     private Redditor owner;

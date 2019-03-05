@@ -1,37 +1,55 @@
 package models;
 
 import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.OneToMany;
 import java.util.ArrayList;
 import java.util.List;
 
 @Entity
 public class Redditor {
-    private int id;
 
+    @Id
+    @GeneratedValue
+    private Long id;
+    private String userName;
+    private String passWord;
     /**
-     * MultiReddit always contains 1 multiReddit which is the TimeLine of the user
+     * MultiReddit should always contain 1 multiReddit which is the TimeLine of the user
      * The TimeLine multireddit contains all the subreddits the user follows in one collection
      */
+    //@OneToMany
     private List<MultiReddit> multiReddits;
-    private List<Subreddit> moderatedSubreddits;
+
+    //@OneToMany
     private List<Post> posts;
+
+    //@OneToMany
     private List<Comment> comments;
+
+    //@OneToMany
     private List<Vote> votes;
 
-    private String username;
-    private String password;
 
     public Redditor() {
 
     }
 
     public Redditor(String username, String password) {
-        this.username = username;
-        this.password = password;
+        this.userName = username;
+        this.passWord = password;
         this.posts = new ArrayList<>();
         this.comments = new ArrayList<>();
         this.multiReddits = new ArrayList<>();
-        this.moderatedSubreddits = new ArrayList<>();
         this.votes = new ArrayList<>();
+    }
+
+    @Override
+    public String toString() {
+        return String.format(
+                "Redditor[id=%d, userName=%s, passWord=%s]",
+                id, userName, passWord
+        );
     }
 }

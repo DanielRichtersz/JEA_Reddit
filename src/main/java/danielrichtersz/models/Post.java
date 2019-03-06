@@ -4,11 +4,26 @@ import danielrichtersz.models.components.OwnerContainer;
 import danielrichtersz.models.components.ReactionContainer;
 import danielrichtersz.models.components.VoteContainer;
 
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.OneToOne;
+
+@Entity
 public class Post {
 
+    @Id
+    @GeneratedValue
+    private Long id;
     private String content;
+
+    @OneToOne
     private ReactionContainer reactionContainer;
+
+    @OneToOne
     private OwnerContainer ownerContainer;
+
+    @OneToOne
     private VoteContainer voteContainer;
 
     public Post() {

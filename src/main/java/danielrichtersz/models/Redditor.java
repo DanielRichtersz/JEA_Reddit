@@ -3,6 +3,7 @@ package danielrichtersz.models;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.OneToMany;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -18,9 +19,11 @@ public class Redditor {
      * MultiReddit should always contain 1 multiReddit which is the TimeLine of the user
      * The TimeLine multireddit contains all the subreddits the user follows in one collection
      */
-    /*private List<MultiReddit> multiReddits;
 
-    private List<Post> posts;
+    @OneToMany
+    private List<MultiReddit> multiReddits;
+
+    /*private List<Post> posts;
 
     private List<Comment> comments;
 

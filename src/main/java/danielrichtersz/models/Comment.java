@@ -4,14 +4,27 @@ import danielrichtersz.models.components.OwnerContainer;
 import danielrichtersz.models.components.ReactionContainer;
 import danielrichtersz.models.components.VoteContainer;
 
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.OneToOne;
 
+@Entity
 public class Comment extends ReactionContainer {
+    @Id
+    @GeneratedValue
+    private Long id;
+
     private String comment;
 
+    @OneToOne
     private ReactionContainer reactionContainer;
-    private OwnerContainer ownerContainer;
-    private VoteContainer voteContainer;
 
+    @OneToOne
+    private OwnerContainer ownerContainer;
+
+    @OneToOne
+    private VoteContainer voteContainer;
 
     public Comment(String comment, Redditor owner) {
         this.comment = comment;

@@ -2,7 +2,16 @@ package danielrichtersz.models.components;
 
 import danielrichtersz.models.Redditor;
 
+import javax.persistence.*;
+
+@Entity
 public class OwnerContainer {
+
+    @Id
+    @GeneratedValue
+    private Long id;
+
+    @ManyToOne
     private Redditor owner;
 
     public OwnerContainer(Redditor owner) {

@@ -14,6 +14,10 @@ public class OwnerContainer {
     @ManyToOne
     private Redditor owner;
 
+    public OwnerContainer() {
+
+    }
+
     public OwnerContainer(Redditor owner) {
         this.owner = owner;
     }

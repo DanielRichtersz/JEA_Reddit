@@ -23,6 +23,10 @@ public class Subreddit {
     @OneToMany
     private List<Redditor> followers;
 
+    public Subreddit() {
+
+    }
+
     public Subreddit(String name) {
         this.name = name;
     }

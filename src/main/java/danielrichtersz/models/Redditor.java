@@ -1,9 +1,7 @@
 package danielrichtersz.models;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.OneToMany;
+import javax.persistence.*;
+import javax.transaction.Transactional;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -20,12 +18,13 @@ public class Redditor {
      * The TimeLine multireddit contains all the subreddits the user follows in one collection
      */
 
-    @OneToMany
+    @OneToMany (fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true)
     private List<MultiReddit> multiReddits;
 
-    /*private List<Post> posts;
+    @OneToMany
+    private List<Post> posts;
 
-    private List<Comment> comments;
+    /*private List<Comment> comments;
 
     private List<Vote> votes;*/
 
@@ -37,10 +36,20 @@ public class Redditor {
     public Redditor(String username, String password) {
         this.userName = username;
         this.passWord = password;
+        this.multiReddits = new ArrayList<>();
+        this.multiReddits.add(new MultiReddit(username + "Multireddit"));
         /*this.posts = new ArrayList<>();
         this.comments = new ArrayList<>();
         this.multiReddits = new ArrayList<>();
         this.votes = new ArrayList<>();*/
+    }
+
+    public void addNewMultiReddit(String name) {
+        this.multiReddits.add(new MultiReddit(name));
+    }
+
+    public List<MultiReddit> getMultiReddits() {
+        return this.multiReddits;
     }
 
     @Override

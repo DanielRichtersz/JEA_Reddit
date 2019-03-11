@@ -1,9 +1,8 @@
 package danielrichtersz.models;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.OneToMany;
+import danielrichtersz.models.components.OwnerContainer;
+
+import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -15,8 +14,15 @@ public class MultiReddit {
     private Long id;
     private String name;
 
+    @ManyToOne
+    private Redditor redditor;
+
     @OneToMany
     private List<Subreddit> subreddits;
+
+    public MultiReddit() {
+
+    }
 
     public MultiReddit(String name) {
         this.name = name;

@@ -26,6 +26,10 @@ public class Comment extends ReactionContainer {
     @OneToOne
     private VoteContainer voteContainer;
 
+    public Comment() {
+
+    }
+
     public Comment(String comment, Redditor owner) {
         this.comment = comment;
         this.reactionContainer = new ReactionContainer();

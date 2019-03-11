@@ -19,7 +19,7 @@ public class VoteContainer {
     private List<Vote> votes;
 
     public VoteContainer() {
-        this.votes = new ArrayList<>();
+
     }
 
     public List<Vote> getVotes() {

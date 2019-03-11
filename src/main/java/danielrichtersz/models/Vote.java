@@ -19,6 +19,10 @@ public class Vote {
     @OneToOne
     private OwnerContainer ownerContainer;
 
+    public Vote() {
+
+    }
+
     public Vote(Redditor owner, Post post, TypeVote typeVote) {
         this.post = post;
         this.typeVote = typeVote;

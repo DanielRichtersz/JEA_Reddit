@@ -1,13 +1,12 @@
 package danielrichtersz.repositories.interfaces;
 
 import danielrichtersz.models.MultiReddit;
-import danielrichtersz.models.Redditor;
-import java.util.List;
-
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
+import org.springframework.data.repository.query.Param;
 
-public interface RedditorRepository extends CrudRepository<Redditor, Long> {
+public interface MultiRedditRepository extends CrudRepository<MultiReddit, Long> {
 
-    List<Redditor> findByUserName(String lastName);
+    MultiReddit findByName(String name);
+
 }

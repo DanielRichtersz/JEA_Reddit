@@ -1,6 +1,8 @@
 package danielrichtersz;
 
+import danielrichtersz.models.MultiReddit;
 import danielrichtersz.models.Redditor;
+import danielrichtersz.repositories.interfaces.MultiRedditRepository;
 import danielrichtersz.repositories.interfaces.RedditorRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -8,6 +10,8 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
+
+import java.util.List;
 
 @SpringBootApplication
 public class App {
@@ -19,13 +23,14 @@ public class App {
     }
 
     @Bean
-    public CommandLineRunner demo(RedditorRepository repository) {
+    public CommandLineRunner demo(RedditorRepository repository, MultiRedditRepository multiRedditRepository) {
         return (args -> {
             // save couple redditors
             repository.save(new Redditor("username1", "password1"));
             repository.save(new Redditor("username2", "password2"));
             repository.save(new Redditor("username3", "password3"));
             repository.save(new Redditor("username4", "password4"));
+
 
             // fetch all redditors
             log.info("Redditors found with findAll()");
@@ -50,8 +55,16 @@ public class App {
             log.info("--------------------------------------------");
             repository.findByUserName("username2").forEach(username1 -> {
                 log.info(username1.toString());
+                username1.addNewMultiReddit("Timeline");
+                log.info("Added new multi reddit");
+                repository.save(username1);
             });
             log.info("");
+
+            log.info("MultiReddit found with findByName");
+            log.info("---------------------------------");
+            multiRedditRepository.findByName("VoedselsEnzo");
+
 
         });
     }

@@ -10,7 +10,7 @@ import javax.persistence.Id;
 import javax.persistence.OneToOne;
 
 @Entity
-public class Comment extends ReactionContainer {
+public class Comment {
     @Id
     @GeneratedValue
     private Long id;

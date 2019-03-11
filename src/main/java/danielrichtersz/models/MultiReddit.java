@@ -14,7 +14,7 @@ public class MultiReddit {
     private Long id;
     private String name;
 
-    @ManyToOne
+    @ManyToOne (fetch = FetchType.EAGER)
     private Redditor redditor;
 
     @OneToMany
@@ -24,7 +24,8 @@ public class MultiReddit {
 
     }
 
-    public MultiReddit(String name) {
+    public MultiReddit(String name, Redditor redditor) {
+        this.redditor = redditor;
         this.name = name;
     }
 
@@ -42,5 +43,10 @@ public class MultiReddit {
 
     public void removeSubreddit(Subreddit subreddit) {
         this.subreddits.remove(subreddit);
+    }
+
+    @Override
+    public String toString() {
+        return String.format("MultiReddit[id=%d, name=%s, redditor=%s]", id, name, redditor.toString());
     }
 }

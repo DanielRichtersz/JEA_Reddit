@@ -26,6 +26,11 @@ bootJar {
     version =  '0.1.0'
 }
 
+bootJar {
+    baseName = 'gs-testing-web'
+    version =  '0.1.0'
+}
+
 repositories {
     mavenCentral()
 }
@@ -38,4 +43,5 @@ dependencies {
     compile("com.h2database:h2")
     compile 'mysql:mysql-connector-java'
     testCompile("junit:junit")
+    testCompile("org.springframework.boot:spring-boot-starter-test")
 }

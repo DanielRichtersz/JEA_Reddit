@@ -37,7 +37,7 @@ public class Redditor {
         this.userName = username;
         this.passWord = password;
         this.multiReddits = new ArrayList<>();
-        this.multiReddits.add(new MultiReddit(username + "Multireddit"));
+        this.multiReddits.add(new MultiReddit(username + "Multireddit", this));
         /*this.posts = new ArrayList<>();
         this.comments = new ArrayList<>();
         this.multiReddits = new ArrayList<>();
@@ -45,7 +45,7 @@ public class Redditor {
     }
 
     public void addNewMultiReddit(String name) {
-        this.multiReddits.add(new MultiReddit(name));
+        this.multiReddits.add(new MultiReddit(name, this));
     }
 
     public List<MultiReddit> getMultiReddits() {

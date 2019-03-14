@@ -23,4 +23,9 @@ public class RedditorServiceImpl implements RedditorService {
         Redditor redditor = new Redditor(username, password);
         return redditorRepository.save(redditor);
     }
+
+    @Override
+    public void deleteRedditor(Long id) {
+        redditorRepository.deleteById(id);
+    }
 }

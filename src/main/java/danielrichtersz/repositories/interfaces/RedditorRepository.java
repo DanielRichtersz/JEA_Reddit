@@ -10,4 +10,6 @@ import org.springframework.data.repository.CrudRepository;
 public interface RedditorRepository extends CrudRepository<Redditor, Long> {
 
     Redditor findByUsername(String username);
+
+    void deleteById(Long id);
 }

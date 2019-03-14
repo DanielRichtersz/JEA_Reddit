@@ -1,11 +1,9 @@
 package danielrichtersz;
 
-import danielrichtersz.models.MultiReddit;
 import danielrichtersz.models.Redditor;
 import danielrichtersz.repositories.interfaces.MultiRedditRepository;
 import danielrichtersz.repositories.interfaces.RedditorRepository;
-import danielrichtersz.services.impl.RedditorServiceImpl;
-import danielrichtersz.services.interfaces.RedditorService;
+import danielrichtersz.controllers.interfaces.RedditorController;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,8 +11,6 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
-
-import java.util.List;
 
 @SpringBootApplication
 public class App {
@@ -26,7 +22,7 @@ public class App {
     }
 
     @Autowired
-    RedditorService redditorService;
+    RedditorController redditorController;
 
     @Bean
     public CommandLineRunner demo(RedditorRepository repository, MultiRedditRepository multiRedditRepository) {
@@ -56,14 +52,15 @@ public class App {
             });
 
             // fetch by last name
-            log.info("Customer found with findByUserName('username2'):");
+            log.info("Redditor found with findByUserName('username2'):");
             log.info("--------------------------------------------");
-            repository.findByUserName("username2").forEach(username1 -> {
+            Redditor username1 = repository.findByUsername("username2");
+            if (username1 != null) {
                 log.info(username1.toString());
                 username1.addNewMultiReddit("Timeline");
                 log.info("Added new multi reddit");
                 repository.save(username1);
-            });
+            }
             log.info("");
 
             log.info("MultiReddits found with findByName:");
@@ -81,8 +78,8 @@ public class App {
             log.info("-------------------------------------------------------------");
             log.info("");
 
-            log.info("Creating new Redditor with RedditorServiceImpl.createRedditor");
-            Redditor redditor = redditorService.createUser("name", "password");
+            log.info("Creating new Redditor with RedditorControllerImpl.createRedditor");
+            Redditor redditor = redditorController.createUser("name", "password");
             log.info("-------------------------------------------------------------");
             log.info("Redditor created: " + redditor.toString());
             log.info("");

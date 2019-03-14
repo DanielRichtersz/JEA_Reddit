@@ -1,7 +1,6 @@
 package danielrichtersz.models;
 
 import javax.persistence.*;
-import javax.transaction.Transactional;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -11,7 +10,7 @@ public class Redditor {
     @Id
     @GeneratedValue
     private Long id;
-    private String userName;
+    private String username;
     private String passWord;
     /**
      * MultiReddit should always contain 1 multiReddit which is the TimeLine of the user
@@ -34,7 +33,7 @@ public class Redditor {
     }
 
     public Redditor(String username, String password) {
-        this.userName = username;
+        this.username = username;
         this.passWord = password;
         this.multiReddits = new ArrayList<>();
         this.multiReddits.add(new MultiReddit(username + "Multireddit", this));
@@ -55,8 +54,8 @@ public class Redditor {
     @Override
     public String toString() {
         return String.format(
-                "Redditor[id=%d, userName=%s, passWord=%s]",
-                id, userName, passWord
+                "Redditor[id=%d, username=%s, passWord=%s]",
+                id, username, passWord
         );
     }
 }

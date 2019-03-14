@@ -9,21 +9,12 @@ import org.springframework.stereotype.Service;
 @Service
 public class RedditorServiceImpl implements RedditorService {
 
+    @Autowired
     private RedditorRepository redditorRepository;
 
-    public RedditorServiceImpl() {
-
-    }
-
-    @Autowired
-    public RedditorServiceImpl(RedditorRepository redditorRepository) {
-        this.redditorRepository = redditorRepository;
-    }
 
     @Override
-    public Redditor createUser(String username, String password) {
-        Redditor redditor = new Redditor(username, password);
-        redditorRepository.save(redditor);
-        return redditor;
+    public Redditor findByUsername(String username) {
+        return redditorRepository.findByUsername(username);
     }
 }

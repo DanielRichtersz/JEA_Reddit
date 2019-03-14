@@ -1,4 +1,5 @@
 package danielrichtersz.services.interfaces;
 
-public interface TimelineService {
+public interface VoteService {
+
 }

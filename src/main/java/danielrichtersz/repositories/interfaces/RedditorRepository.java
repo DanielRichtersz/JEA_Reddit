@@ -9,5 +9,5 @@ import org.springframework.data.repository.CrudRepository;
 
 public interface RedditorRepository extends CrudRepository<Redditor, Long> {
 
-    List<Redditor> findByUserName(String lastName);
+    Redditor findByUsername(String username);
 }

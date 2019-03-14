@@ -3,6 +3,7 @@ package danielrichtersz.controllers.impl;
 import danielrichtersz.models.Redditor;
 import danielrichtersz.repositories.interfaces.RedditorRepository;
 import danielrichtersz.controllers.interfaces.RedditorController;
+import danielrichtersz.services.interfaces.RedditorService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
@@ -15,31 +16,27 @@ import java.util.List;
 @RequestMapping("/api")
 public class RedditorControllerImpl implements RedditorController {
 
+    @Autowired
+    RedditorService redditorService;
+
     public RedditorControllerImpl() {
 
     }
 
-    public RedditorControllerImpl(RedditorRepository redditorRepository) {
-        this.redditorRepository = redditorRepository;
+    public RedditorControllerImpl(RedditorService redditorService) {
+        this.redditorService = redditorService;
     }
 
 
     @ResponseBody
     @GetMapping("/redditors/{name}")
     public Redditor getRedditorsByName(@PathVariable(value = "name") String redditorUsername) {
-        Redditor found = redditorRepository.findByUsername(redditorUsername);
+        Redditor found = redditorService.findByUsername(redditorUsername);
         return found;
     }
 
-    @PostMapping("/redditors")
-    public Redditor createRedditor(@Valid @RequestBody Redditor redditor) {
-        return redditorRepository.save(redditor);
-    }
-
-    @Override
-    public Redditor createUser(String username, String password) {
-        Redditor redditor = new Redditor(username, password);
-        redditorRepository.save(redditor);
-        return redditor;
+    @PostMapping("/redditors/{name}")
+    public Redditor createRedditor(String username, String password) {
+        return redditorService.createRedditor(username, password);
     }
 }

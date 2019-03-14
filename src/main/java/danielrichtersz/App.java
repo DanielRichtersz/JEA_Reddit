@@ -79,7 +79,7 @@ public class App {
             log.info("");
 
             log.info("Creating new Redditor with RedditorControllerImpl.createRedditor");
-            Redditor redditor = redditorController.createUser("name", "password");
+            Redditor redditor = redditorController.createRedditor("name", "password");
             log.info("-------------------------------------------------------------");
             log.info("Redditor created: " + redditor.toString());
             log.info("");

@@ -17,4 +17,10 @@ public class RedditorServiceImpl implements RedditorService {
     public Redditor findByUsername(String username) {
         return redditorRepository.findByUsername(username);
     }
+
+    @Override
+    public Redditor createRedditor(String username, String password) {
+        Redditor redditor = new Redditor(username, password);
+        return redditorRepository.save(redditor);
+    }
 }

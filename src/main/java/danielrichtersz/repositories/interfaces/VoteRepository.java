@@ -1,4 +1,7 @@
 package danielrichtersz.repositories.interfaces;
 
-public class VoteRepository {
+import danielrichtersz.models.Vote;
+import org.springframework.data.repository.CrudRepository;
+
+public interface VoteRepository extends CrudRepository<Vote, Long> {
 }

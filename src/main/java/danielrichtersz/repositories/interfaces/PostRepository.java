@@ -1,4 +1,8 @@
 package danielrichtersz.repositories.interfaces;
 
-public class PostRepository {
+
+import danielrichtersz.models.Post;
+import org.springframework.data.repository.CrudRepository;
+
+public interface PostRepository extends CrudRepository<Post, Long> {
 }

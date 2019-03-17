@@ -10,22 +10,27 @@ public class Redditor {
     @Id
     @GeneratedValue
     private Long id;
+
+    //Unique constraint?
     private String username;
+
     private String passWord;
     /**
      * MultiReddit should always contain 1 multiReddit which is the TimeLine of the user
      * The TimeLine multireddit contains all the subreddits the user follows in one collection
      */
 
-    @OneToMany (fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true)
     private List<MultiReddit> multiReddits;
 
     @OneToMany
     private List<Post> posts;
 
-    /*private List<Comment> comments;
+    @OneToMany
+    private List<Comment> comments;
 
-    private List<Vote> votes;*/
+    @OneToMany
+    private List<Vote> votes;
 
 
     public Redditor() {
@@ -36,19 +41,42 @@ public class Redditor {
         this.username = username;
         this.passWord = password;
         this.multiReddits = new ArrayList<>();
-        this.multiReddits.add(new MultiReddit(username + "Multireddit", this));
-        /*this.posts = new ArrayList<>();
+        this.multiReddits.add(new MultiReddit(username + "Timeline", this));
+        this.posts = new ArrayList<>();
         this.comments = new ArrayList<>();
-        this.multiReddits = new ArrayList<>();
-        this.votes = new ArrayList<>();*/
+        this.votes = new ArrayList<>();
     }
 
-    public void addNewMultiReddit(String name) {
-        this.multiReddits.add(new MultiReddit(name, this));
+    public String getUsername() {
+        return this.username;
     }
 
     public List<MultiReddit> getMultiReddits() {
         return this.multiReddits;
+    }
+
+    public List<Post> getPosts() {
+        return this.posts;
+    }
+
+    public List<Comment> getComments() {
+        return this.comments;
+    }
+
+    public List<Vote> getVotes() {
+        return this.votes;
+    }
+
+    public boolean checkPassword(String givenPassword) {
+        return (this.passWord == givenPassword);
+    }
+
+    public boolean checkId(Long givenId) {
+        return (this.id == givenId);
+    }
+
+    public void addNewMultiReddit(String name) {
+        this.multiReddits.add(new MultiReddit(name, this));
     }
 
     @Override

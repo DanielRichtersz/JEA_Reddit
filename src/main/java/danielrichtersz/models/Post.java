@@ -4,10 +4,7 @@ import danielrichtersz.models.components.OwnerContainer;
 import danielrichtersz.models.components.ReactionContainer;
 import danielrichtersz.models.components.VoteContainer;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.OneToOne;
+import javax.persistence.*;
 
 @Entity
 public class Post {
@@ -15,6 +12,7 @@ public class Post {
     @Id
     @GeneratedValue
     private Long id;
+    private String title;
     private String content;
 
     @OneToOne
@@ -30,11 +28,20 @@ public class Post {
 
     }
 
-    public Post(String content, Redditor owner) {
+    public Post(String title, String content, Redditor owner) {
+        this.title = title;
         this.content = content;
         this.reactionContainer = new ReactionContainer();
         this.ownerContainer = new OwnerContainer(owner);
         this.voteContainer = new VoteContainer();
+    }
+
+    public String getTitle() {
+        return this.title;
+    }
+
+    public String getContent() {
+        return this.content;
     }
 
     public ReactionContainer getReactionContainer() {

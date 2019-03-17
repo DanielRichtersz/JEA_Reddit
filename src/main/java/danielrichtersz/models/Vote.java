@@ -4,6 +4,7 @@ import danielrichtersz.models.components.OwnerContainer;
 import danielrichtersz.models.enums.TypeVote;
 
 import javax.persistence.*;
+import java.lang.reflect.Type;
 
 @Entity
 public class Vote {
@@ -29,7 +30,11 @@ public class Vote {
         this.ownerContainer = new OwnerContainer(owner);
     }
 
-    public TypeVote getVoteType() {
+    public Post getPost() {
+        return this.post;
+    }
+
+    public TypeVote getTypeVote() {
         return this.typeVote;
     }
 

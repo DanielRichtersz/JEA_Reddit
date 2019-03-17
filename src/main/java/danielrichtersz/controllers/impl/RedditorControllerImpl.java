@@ -5,6 +5,7 @@ import danielrichtersz.controllers.interfaces.RedditorController;
 import danielrichtersz.services.interfaces.RedditorService;
 import io.swagger.annotations.*;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
@@ -28,6 +29,11 @@ public class RedditorControllerImpl implements RedditorController {
         this.redditorService = redditorService;
     }
 
+    @PostMapping("/redditors")
+    public ResponseEntity<Redditor> createRedditor(@ApiParam(value = "The new username for the to-be created redditor", required = true) @RequestParam (value = "name") String username,
+                                                  @ApiParam(value = "The password for the to-be created redditor", required = true) @RequestParam(value = "password") String password) {
+        return ResponseEntity.ok(redditorService.createRedditor(username, password));
+    }
 
     @ResponseBody
     @GetMapping("/redditors/{name}")
@@ -35,16 +41,12 @@ public class RedditorControllerImpl implements RedditorController {
     @ApiResponses(value = {
             @ApiResponse(code = 404, message = "The given username did not match an existing user's username")
     })
-    public Redditor getRedditorsByName(@PathVariable(value = "name") String redditorUsername) {
+    public Redditor getRedditorsByUsername(@PathVariable(value = "name") String redditorUsername) {
         Redditor found = redditorService.findByUsername(redditorUsername);
         return found;
     }
 
-    @PostMapping("/redditors/{name}/{password}")
-    public Redditor createRedditor(@ApiParam(value = "The new username for the to-be created redditor", required = true) @PathVariable(value = "name") String username,
-                                   @ApiParam(value = "The password for the to-be created redditor", required = true) @PathVariable(value = "password") String password) {
-        return redditorService.createRedditor(username, password);
-    }
+
 
     /*@PutMapping("/redditors/{id}")
     @ApiOperation(value = "Update a redditor by id")

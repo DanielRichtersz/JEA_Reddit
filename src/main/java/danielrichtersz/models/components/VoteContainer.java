@@ -10,6 +10,7 @@ import java.util.List;
 
 @Entity
 public class VoteContainer {
+
     @Id
     @GeneratedValue
     private Long id;
@@ -23,5 +24,9 @@ public class VoteContainer {
 
     public List<Vote> getVotes() {
         return this.votes;
+    }
+
+    public void addVote(Vote vote) {
+        this.votes.add(vote);
     }
 }

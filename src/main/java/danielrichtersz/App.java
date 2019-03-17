@@ -1,9 +1,13 @@
 package danielrichtersz;
 
+import danielrichtersz.models.Post;
 import danielrichtersz.models.Redditor;
+import danielrichtersz.models.Subreddit;
 import danielrichtersz.repositories.interfaces.MultiRedditRepository;
+import danielrichtersz.repositories.interfaces.PostRepository;
 import danielrichtersz.repositories.interfaces.RedditorRepository;
 import danielrichtersz.controllers.interfaces.RedditorController;
+import danielrichtersz.repositories.interfaces.SubredditRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,14 +29,13 @@ public class App {
     RedditorController redditorController;
 
     @Bean
-    public CommandLineRunner demo(RedditorRepository repository, MultiRedditRepository multiRedditRepository) {
+    public CommandLineRunner demo(RedditorRepository repository, MultiRedditRepository multiRedditRepository, SubredditRepository subredditRepository, PostRepository postRepository) {
         return (args -> {
             // save couple redditors
             repository.save(new Redditor("username1", "password1"));
             repository.save(new Redditor("username2", "password2"));
             repository.save(new Redditor("username3", "password3"));
             repository.save(new Redditor("username4", "password4"));
-
 
             // fetch all redditors
             log.info("Redditors found with findAll()");
@@ -71,18 +74,46 @@ public class App {
                     log.info(multiReddit.toString());
                 }
             });
+
             log.info("");
+
+            log.info("Create new subreddit");
+            log.info("--------------------");
+            subredditRepository.save(new Subreddit("TestSubreddit", "This is a test description of a test subreddit"));
+            log.info("Subreddit created");
+            log.info("");
+
+            log.info("Find subreddit");
+            Subreddit subreddit = subredditRepository.findByName("TestSubreddit");
+            if (subreddit != null) {
+                log.info("Subreddit found: " + subreddit.toString());
+
+                log.info("MultiReddits found with findByName:");
+                log.info("---------------------------------");
+                multiRedditRepository.findByName("Timeline").forEach(multiReddit -> {
+                    if (multiReddit != null) {
+                        log.info("Found multireddit:");
+                        log.info(multiReddit.toString());
+                        //multiReddit.addSubReddit(subreddit);
+                        //multiRedditRepository.save(multiReddit);
+                    }
+                });
+               // if (redditor != null) {
+                 //   subreddit.addNewPost(new Post("title", "contenttest", username1));
+                   // subredditRepository.save(subreddit);
+               // }
+            }
+            log.info("---------------------");
+            log.info("");
+
+
+
 
             log.info("-------------------------------------------------------------");
             log.info("USING SERVICE LAYER");
             log.info("-------------------------------------------------------------");
             log.info("");
 
-            log.info("Creating new Redditor with RedditorControllerImpl.createRedditor");
-            Redditor redditor = redditorController.createRedditor("name", "password");
-            log.info("-------------------------------------------------------------");
-            log.info("Redditor created: " + redditor.toString());
-            log.info("");
 
         });
     }

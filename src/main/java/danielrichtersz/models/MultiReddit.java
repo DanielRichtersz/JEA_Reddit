@@ -37,6 +37,9 @@ public class MultiReddit {
         return this.name;
     }
 
+    public List<Subreddit> getSubreddits() {
+        return this.subreddits;
+    }
     public void addSubReddit(Subreddit subreddit) {
         this.subreddits.add(subreddit);
     }

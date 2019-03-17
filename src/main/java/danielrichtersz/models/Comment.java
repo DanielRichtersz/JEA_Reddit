@@ -11,6 +11,7 @@ import javax.persistence.OneToOne;
 
 @Entity
 public class Comment {
+
     @Id
     @GeneratedValue
     private Long id;
@@ -35,6 +36,10 @@ public class Comment {
         this.reactionContainer = new ReactionContainer();
         this.ownerContainer = new OwnerContainer(owner);
         this.voteContainer = new VoteContainer();
+    }
+
+    public String getComment() {
+        return this.comment;
     }
 
     public ReactionContainer getReactionContainer() {

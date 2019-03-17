@@ -31,9 +31,8 @@ public class RedditorControllerImpl implements RedditorController {
     }
 
     @PostMapping("/redditors")
-    public ResponseEntity createRedditor(@ApiParam(value = "The new username for the to-be created redditor", required = true) @RequestParam(value = "name") String username,
+    public ResponseEntity createRedditor(@ApiParam(value = "The username for the to-be created redditor", required = true) @RequestParam(value = "name") String username,
                                          @ApiParam(value = "The password for the to-be created redditor", required = true) @RequestParam(value = "password") String password) {
-
         //TODO: Auto error message when duplicate names are found, and throw with Try/Catch
         if (redditorService.findByUsername(username) == null) {
             return ResponseEntity
@@ -49,9 +48,12 @@ public class RedditorControllerImpl implements RedditorController {
     @ApiResponses(value = {
             @ApiResponse(code = 404, message = "The given username did not match an existing user's username")
     })
-    public Redditor getRedditorsByUsername(@PathVariable(value = "name") String redditorUsername) {
+    public ResponseEntity getRedditorByUsername(@PathVariable(value = "name") String redditorUsername) {
         Redditor found = redditorService.findByUsername(redditorUsername);
-        return found;
+        if (found != null) {
+            return ResponseEntity.status(HttpStatus.FOUND).body(found);
+        }
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body("The given username did not match an existing user's username");
     }
 
 

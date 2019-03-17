@@ -40,6 +40,7 @@ public class MultiReddit {
     public List<Subreddit> getSubreddits() {
         return this.subreddits;
     }
+
     public void addSubReddit(Subreddit subreddit) {
         this.subreddits.add(subreddit);
     }

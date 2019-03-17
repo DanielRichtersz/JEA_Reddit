@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 public interface RedditorController {
 
-    Redditor getRedditorsByUsername(@PathVariable(value = "name") String redditorUsername);
+    ResponseEntity getRedditorByUsername(@PathVariable(value = "name") String redditorUsername);
 
-    ResponseEntity<Redditor> createRedditor(String username, String password);
+    ResponseEntity createRedditor(String username, String password);
 }

@@ -14,7 +14,7 @@ public class Redditor {
     //Unique constraint?
     private String username;
 
-    private String passWord;
+    private String password;
     /**
      * MultiReddit should always contain 1 multiReddit which is the TimeLine of the user
      * The TimeLine multireddit contains all the subreddits the user follows in one collection
@@ -39,7 +39,7 @@ public class Redditor {
 
     public Redditor(String username, String password) {
         this.username = username;
-        this.passWord = password;
+        this.password = password;
         this.multiReddits = new ArrayList<>();
         this.multiReddits.add(new MultiReddit(username + "Timeline", this));
         this.posts = new ArrayList<>();
@@ -68,7 +68,7 @@ public class Redditor {
     }
 
     public boolean checkPassword(String givenPassword) {
-        return (this.passWord == givenPassword);
+        return (this.password == givenPassword);
     }
 
     public boolean checkId(Long givenId) {
@@ -82,8 +82,8 @@ public class Redditor {
     @Override
     public String toString() {
         return String.format(
-                "Redditor[id=%d, username=%s, passWord=%s]",
-                id, username, passWord
+                "Redditor[id=%d, username=%s, password=%s]",
+                id, username, password
         );
     }
 }

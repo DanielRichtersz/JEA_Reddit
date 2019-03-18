@@ -35,13 +35,12 @@ public class RedditorControllerImpl implements RedditorController {
     @Override
     public ResponseEntity createRedditor(@ApiParam(value = "The username for the to-be created redditor", required = true) @RequestParam(value = "name") String username,
                                          @ApiParam(value = "The password for the to-be created redditor", required = true) @RequestParam(value = "password") String password) {
-        //TODO: Auto error message when duplicate names are found, and throw with Try/Catch
-        if (redditorService.findByUsername(username) == null) {
-            return ResponseEntity
-                    .status(HttpStatus.CREATED)
-                    .body(redditorService.createRedditor(username, password));
+        if (redditorService.findByUsername(username) != null) {
+            return ResponseEntity.status(HttpStatus.CONFLICT).body("This username is already in use, please try another username");
         }
-        return ResponseEntity.status(HttpStatus.CONFLICT).body("This username is already in use, please try another username");
+        return ResponseEntity
+                .status(HttpStatus.CREATED)
+                .body(redditorService.createRedditor(username, password));
     }
 
     @GetMapping("/redditors/{name}")
@@ -59,13 +58,13 @@ public class RedditorControllerImpl implements RedditorController {
     }
 
     @PutMapping("/redditors")
-    @ApiOperation(value = "Edit a specific redditor by ID", response = Redditor.class)
+    @ApiOperation(value = "Edit a specific redditor by username", response = Redditor.class)
     @Override
     public ResponseEntity editRedditor(
-            @ApiParam(value = "The id for the to-be edited redditor", required = true) @RequestParam(value = "id") Long id,
+            @ApiParam(value = "The username for the to-be edited redditor", required = true) @RequestParam(value = "username") String username,
             @ApiParam(value = "The old password of the redditor, for verification") @RequestParam(value = "oldpassword") String oldpassword,
             @ApiParam(value = "The new password of the redditor") @RequestParam(value = "newpassword") String newpassword) {
-        Redditor redditor = redditorService.findById(id);
+        Redditor redditor = redditorService.findByUsername(username);
 
         if (redditor == null) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Redditor not found");
@@ -87,13 +86,13 @@ public class RedditorControllerImpl implements RedditorController {
     }
 
     @DeleteMapping("/redditors")
-    @ApiOperation(value = "Delete a redditor by id")
+    @ApiOperation(value = "Delete a redditor by username")
     @Override
     public ResponseEntity deleteRedditor(@ApiParam(value = "The id of the to-be deleted redditor", required = true)
-                                         @RequestParam(value = "id") Long userID,
+                                         @RequestParam(value = "username") String username,
                                          @ApiParam(value = "The password of the to-be deleted redditor", required = true)
                                          @RequestParam(value = "password") String password) {
-        Redditor redditor = redditorService.findById(userID);
+        Redditor redditor = redditorService.findByUsername(username);
         if (redditor == null) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Redditor not found");
         }
@@ -102,7 +101,7 @@ public class RedditorControllerImpl implements RedditorController {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Given password did not match the password for this Redditor");
         }
 
-        redditorService.deleteRedditor(userID);
+        redditorService.deleteRedditor(username);
         return ResponseEntity.status(HttpStatus.ACCEPTED).body("Redditor succesfully deleted");
     }
 }

@@ -30,8 +30,8 @@ public class RedditorServiceImpl implements RedditorService {
     }
 
     @Override
-    public void deleteRedditor(Long id) {
-        redditorRepository.deleteById(id);
+    public void deleteRedditor(String username) {
+        redditorRepository.deleteByUsername(username);
     }
 
     @Override

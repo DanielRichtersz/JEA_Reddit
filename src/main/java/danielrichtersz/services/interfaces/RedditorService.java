@@ -10,7 +10,7 @@ public interface RedditorService {
 
     Redditor editRedditor(Redditor redditor);
 
-    void deleteRedditor(Long id);
+    void deleteRedditor(String username);
 
     Redditor findById(Long redditorId);
 }

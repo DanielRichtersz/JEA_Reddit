@@ -14,9 +14,6 @@ public class SubredditServiceImpl implements SubredditService {
     @Autowired
     private SubredditRepository subredditRepository;
 
-    @Autowired
-    private RedditorRepository redditorRepository;
-
     @Override
     public Subreddit createSubreddit(String name, String description, Redditor owner) {
         return subredditRepository.save(new Subreddit(name, description, owner));

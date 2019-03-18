@@ -67,8 +67,12 @@ public class Redditor {
         return this.votes;
     }
 
-    public boolean checkPassword(String givenPassword) {
-        return (this.password == givenPassword);
+    public boolean passwordIsValid(String givenPassword) {
+        return this.password.equals(givenPassword);
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
     }
 
     public boolean checkId(Long givenId) {

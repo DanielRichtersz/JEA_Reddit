@@ -8,6 +8,8 @@ public interface RedditorService {
 
     Redditor createRedditor(String username, String password);
 
+    Redditor editRedditor(Redditor redditor);
+
     void deleteRedditor(Long id);
 
     Redditor findById(Long redditorId);

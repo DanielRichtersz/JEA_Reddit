@@ -14,5 +14,7 @@ public interface RedditorController {
 
     ResponseEntity createRedditor(String username, String password);
 
-    Map<String, Boolean> deleteRedditor(Long userID);
+    ResponseEntity editRedditor(Long id, String oldpassword, String newpassword);
+
+    ResponseEntity deleteRedditor(Long userID, String password);
 }

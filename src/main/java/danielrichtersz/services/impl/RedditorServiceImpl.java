@@ -25,6 +25,11 @@ public class RedditorServiceImpl implements RedditorService {
     }
 
     @Override
+    public Redditor editRedditor(Redditor redditor) {
+        return redditorRepository.save(redditor);
+    }
+
+    @Override
     public void deleteRedditor(Long id) {
         redditorRepository.deleteById(id);
     }

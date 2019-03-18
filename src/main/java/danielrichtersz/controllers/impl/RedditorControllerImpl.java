@@ -10,10 +10,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
-import javax.xml.ws.Response;
-import java.util.HashMap;
-import java.util.Map;
-
 //Controller is same as Bean, endpoint layer
 @Controller
 @RequestMapping("/api")
@@ -76,10 +72,10 @@ public class RedditorControllerImpl implements RedditorController {
 
         redditor.setPassword(newpassword);
 
-        Redditor editedRedditor = redditorService.editRedditor(redditor);
+        Redditor editedRedditor = redditorService.updateRedditor(redditor);
 
         if (editedRedditor == null) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Something went wrong, please try again or contact customer support");
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Something went wrong while updating the redditor, please try again or contact customer support");
         }
 
         return ResponseEntity.status(HttpStatus.ACCEPTED).body(editedRedditor);

@@ -5,5 +5,8 @@ import danielrichtersz.models.Subreddit;
 
 public interface SubredditService {
     Subreddit createSubreddit(String name, String description, Redditor owner);
+
     Subreddit findByName(String name);
+
+    Subreddit updateSubreddit(Subreddit subreddit);
 }

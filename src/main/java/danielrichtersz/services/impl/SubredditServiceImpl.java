@@ -2,7 +2,6 @@ package danielrichtersz.services.impl;
 
 import danielrichtersz.models.Redditor;
 import danielrichtersz.models.Subreddit;
-import danielrichtersz.repositories.interfaces.RedditorRepository;
 import danielrichtersz.repositories.interfaces.SubredditRepository;
 import danielrichtersz.services.interfaces.SubredditService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,5 +21,10 @@ public class SubredditServiceImpl implements SubredditService {
     @Override
     public Subreddit findByName(String name) {
         return subredditRepository.findByName(name);
+    }
+
+    @Override
+    public Subreddit updateSubreddit(Subreddit subreddit) {
+        return subredditRepository.save(subreddit);
     }
 }

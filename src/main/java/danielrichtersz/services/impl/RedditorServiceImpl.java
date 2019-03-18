@@ -25,7 +25,7 @@ public class RedditorServiceImpl implements RedditorService {
     }
 
     @Override
-    public Redditor editRedditor(Redditor redditor) {
+    public Redditor updateRedditor(Redditor redditor) {
         return redditorRepository.save(redditor);
     }
 

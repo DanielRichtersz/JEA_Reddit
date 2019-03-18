@@ -14,6 +14,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 import javax.websocket.server.PathParam;
+import java.util.List;
 
 @Controller
 @RequestMapping("/api")
@@ -56,6 +57,44 @@ public class SubredditControllerImpl implements SubredditController {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("No subreddit with the given name exists");
         }
         return ResponseEntity.status(HttpStatus.FOUND).body(subreddit);
+    }
+
+    @PutMapping("/subreddits/{subredditname}")
+    @Override
+    public ResponseEntity editSubredditDescriptionBySubredditNameAndUsername(
+            @ApiParam(value = "The name of the subreddit")
+            @PathVariable(value = "subredditname") String subredditName,
+            @ApiParam(value = "The id of the user")
+            @RequestParam(value = "username") String username,
+            @ApiParam(value = "The new description of the subreddit")
+            @RequestParam(value = "description") String description) {
+
+        //The editing of the subreddit
+        Subreddit subreddit = subredditService.findByName(subredditName);
+        if (subreddit == null) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("The subreddit you tried to edit does not exist");
+        }
+
+        Redditor redditor = redditorService.findByUsername(username);
+        if (redditor == null) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("No redditor with this name could be found");
+        }
+
+        for (Redditor moderator : subreddit.getModerators()) {
+            if (moderator.getUsername().equals(username)) {
+                //TODO: Vraag docent: Is dit juiste manier van doen (description hier gezet ipv in service laag...)
+                subreddit.setDescription(description);
+                Subreddit updatedSubreddit = subredditService.updateSubreddit(subreddit);
+                if (updatedSubreddit == null) {
+                    return ResponseEntity
+                            .status(HttpStatus.INTERNAL_SERVER_ERROR)
+                            .body("Something went wrong while updating the subreddit, please try again or contact customer support");
+                }
+                return ResponseEntity.status(HttpStatus.ACCEPTED).body(updatedSubreddit);
+            }
+        }
+
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("You do not have the correct user rights to edit this subreddit");
     }
 
 }

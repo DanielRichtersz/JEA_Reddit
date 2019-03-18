@@ -1,6 +1,7 @@
 package danielrichtersz.models;
 
 import javax.persistence.*;
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -15,7 +16,7 @@ public class Subreddit {
     @OneToMany
     private List<Post> posts;
 
-    @OneToMany
+    @OneToMany (fetch = FetchType.LAZY)
     private List<Redditor> moderators;
 
     @OneToMany
@@ -28,6 +29,10 @@ public class Subreddit {
     public Subreddit(String name, String description, Redditor owner) {
         this.name = name;
         this.description = description;
+        this.posts = new ArrayList<>();
+        this.moderators = new ArrayList<>();
+        this.followers = new ArrayList<>();
+        this.moderators.add(owner);
     }
 
     public String getName() {
@@ -52,5 +57,9 @@ public class Subreddit {
 
     public void addNewPost(Post post) {
         this.posts.add(post);
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
     }
 }

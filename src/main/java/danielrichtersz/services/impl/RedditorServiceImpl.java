@@ -31,6 +31,6 @@ public class RedditorServiceImpl implements RedditorService {
 
     @Override
     public Redditor findById(Long redditorId) {
-        return redditorRepository.findById(redditorId).get();
+        return redditorRepository.findById(redditorId).orElse(null);
     }
 }

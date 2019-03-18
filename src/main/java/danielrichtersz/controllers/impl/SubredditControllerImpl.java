@@ -37,7 +37,7 @@ public class SubredditControllerImpl implements SubredditController {
         Redditor owner = redditorService.findById(redditorId);
 
         if (owner == null) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Redditor not found");
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Could not create subreddit, redditor not found");
         }
 
         Subreddit newSubreddit = subredditService.createSubreddit(subredditName, description, owner);

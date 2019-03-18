@@ -28,4 +28,9 @@ public class RedditorServiceImpl implements RedditorService {
     public void deleteRedditor(Long id) {
         redditorRepository.deleteById(id);
     }
+
+    @Override
+    public Redditor findById(Long redditorId) {
+        return redditorRepository.findById(redditorId).get();
+    }
 }

@@ -77,12 +77,6 @@ public class App {
 
             log.info("");
 
-            log.info("Create new subreddit");
-            log.info("--------------------");
-            subredditRepository.save(new Subreddit("TestSubreddit", "This is a test description of a test subreddit"));
-            log.info("Subreddit created");
-            log.info("");
-
             log.info("Find subreddit");
             Subreddit subreddit = subredditRepository.findByName("TestSubreddit");
             if (subreddit != null) {

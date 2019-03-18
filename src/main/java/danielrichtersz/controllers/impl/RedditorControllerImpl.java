@@ -20,7 +20,7 @@ import java.util.Map;
 public class RedditorControllerImpl implements RedditorController {
 
     @Autowired
-    RedditorService redditorService;
+    private RedditorService redditorService;
 
     public RedditorControllerImpl() {
 
@@ -31,6 +31,7 @@ public class RedditorControllerImpl implements RedditorController {
     }
 
     @PostMapping("/redditors")
+    @Override
     public ResponseEntity createRedditor(@ApiParam(value = "The username for the to-be created redditor", required = true) @RequestParam(value = "name") String username,
                                          @ApiParam(value = "The password for the to-be created redditor", required = true) @RequestParam(value = "password") String password) {
         //TODO: Auto error message when duplicate names are found, and throw with Try/Catch
@@ -39,15 +40,15 @@ public class RedditorControllerImpl implements RedditorController {
                     .status(HttpStatus.CREATED)
                     .body(redditorService.createRedditor(username, password));
         }
-        return ResponseEntity.status(HttpStatus.FORBIDDEN).body("This username is already in use, please try another username");
+        return ResponseEntity.status(HttpStatus.CONFLICT).body("This username is already in use, please try another username");
     }
 
-    @ResponseBody
     @GetMapping("/redditors/{name}")
     @ApiOperation(value = "Find a specific redditor by full username", response = Redditor.class)
     @ApiResponses(value = {
             @ApiResponse(code = 404, message = "The given username did not match an existing user's username")
     })
+    @Override
     public ResponseEntity getRedditorByUsername(@PathVariable(value = "name") String redditorUsername) {
         Redditor found = redditorService.findByUsername(redditorUsername);
         if (found != null) {
@@ -70,6 +71,7 @@ public class RedditorControllerImpl implements RedditorController {
 
     @DeleteMapping("/redditors/{id}")
     @ApiOperation(value = "Delete a redditor by id")
+    @Override
     public Map<String, Boolean> deleteRedditor(@ApiParam(value = "The id of the to-be deleted redditor", required = true)
                                                @PathVariable(value = "id") Long userID) {
         redditorService.deleteRedditor(userID);

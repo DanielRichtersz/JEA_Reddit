@@ -25,7 +25,7 @@ public class Subreddit {
 
     }
 
-    public Subreddit(String name, String description) {
+    public Subreddit(String name, String description, Redditor owner) {
         this.name = name;
         this.description = description;
     }

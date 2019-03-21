@@ -12,6 +12,7 @@ public class Post {
 
     private String title;
     private String content;
+    private boolean deleted;
 
     @ManyToOne
     private Redditor owner;
@@ -34,6 +35,7 @@ public class Post {
         this.owner = owner;
         this.title = title;
         this.content = content;
+        this.deleted = false;
     }
 
     public Long getId() {
@@ -70,6 +72,15 @@ public class Post {
 
     public void addVote(Vote vote) {
         votes.add(vote);
+    }
+
+    public boolean isDeleted() {
+        return this.deleted;
+    }
+
+    public void delete() {
+        this.content = "[deleted]";
+        this.deleted = true;
     }
 
 }

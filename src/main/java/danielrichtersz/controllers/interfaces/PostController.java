@@ -2,10 +2,7 @@ package danielrichtersz.controllers.interfaces;
 
 import io.swagger.annotations.ApiParam;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 
 public interface PostController {
     ResponseEntity createPost(
@@ -24,4 +21,7 @@ public interface PostController {
     ResponseEntity searchForPost(String title);
 
     ResponseEntity getPost(String subredditName, Long postId, String postTitle);
+
+    @DeleteMapping("/redditors/posts/{postid}")
+    ResponseEntity deletePost(Long postId, String username);
 }

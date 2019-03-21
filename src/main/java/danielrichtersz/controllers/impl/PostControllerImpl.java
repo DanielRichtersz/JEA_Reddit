@@ -15,7 +15,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
-import javax.xml.ws.Response;
 import java.util.List;
 
 @Controller
@@ -54,8 +53,8 @@ public class PostControllerImpl implements PostController {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Redditor not found");
         }
 
-        if (title.equals("")) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("No title provided for the post, please provide a title");
+        if (title.equals("") || title.equals("[deleted]")) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("No valid title provided for the post, please provide a valid title");
         }
 
         Post post = new Post(title, content, subreddit, redditor);
@@ -89,6 +88,10 @@ public class PostControllerImpl implements PostController {
         Post post = postService.findPostById(postId);
         if (post == null) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Post not found");
+        }
+
+        if (post.isDeleted()) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body("This post was deleted");
         }
 
         if (!post.getOwner().getUsername().equals(username)) {
@@ -140,5 +143,39 @@ public class PostControllerImpl implements PostController {
         }
 
         return ResponseEntity.status(HttpStatus.FOUND).body(post);
+    }
+
+    @DeleteMapping("/redditors/{username}/posts/{postid}")
+    @Override
+    public ResponseEntity deletePost(
+            @ApiParam(value = "The id of the post")
+            @PathVariable(value = "postid") Long postId,
+            @ApiParam(value = "The username of the redditor trying to delete the post")
+            @PathVariable(value = "username") String username) {
+
+        Post post = postService.findPostById(postId);
+
+        if (post.isDeleted())
+        {
+            return ResponseEntity.status(HttpStatus.CONFLICT).body("This post was already deleted");
+        }
+
+
+        if (post == null) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("The post could not be found");
+        }
+
+        if (!post.getOwner().getUsername().equals(username)) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("You do not have the rights to delete this post");
+        }
+
+        try {
+            postService.deletePost(post);
+        }
+        catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e);
+        }
+
+        return ResponseEntity.status(HttpStatus.ACCEPTED).body("Post was removed");
     }
 }

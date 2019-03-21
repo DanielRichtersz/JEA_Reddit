@@ -4,7 +4,8 @@ package danielrichtersz.repositories.interfaces;
 import danielrichtersz.models.Post;
 import org.springframework.data.repository.CrudRepository;
 
-public interface PostRepository extends CrudRepository<Post, Long> {
+import java.util.List;
 
-    Post findByTitleAndOwnerUsername(String title, String username);
+public interface PostRepository extends CrudRepository<Post, Long> {
+    List<Post> findByTitleContainingOrContentContaining(String title, String content);
 }

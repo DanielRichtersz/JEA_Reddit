@@ -7,6 +7,7 @@ import danielrichtersz.models.Subreddit;
 import danielrichtersz.services.interfaces.PostService;
 import danielrichtersz.services.interfaces.RedditorService;
 import danielrichtersz.services.interfaces.SubredditService;
+import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiParam;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -14,8 +15,12 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
+import javax.xml.ws.Response;
+import java.util.List;
+
 @Controller
 @RequestMapping("/api")
+@Api(value = "Post Controller Implementation", description = "Operations pertaining to posts through Spring Boot REST API")
 public class PostControllerImpl implements PostController {
 
     @Autowired
@@ -62,30 +67,26 @@ public class PostControllerImpl implements PostController {
         return ResponseEntity.status(HttpStatus.CREATED).body(post);
     }
 
-    @PutMapping("/subreddits/{subredditname}/posts")
+    @PutMapping("/subreddits/{subredditname}/posts/{postid}/{posttitle}")
     @Override
     public ResponseEntity editPost(
             @ApiParam(value = "The name of the subreddit")
             @PathVariable(value = "subredditname") String subredditName,
-            @ApiParam(value = "The username of the redditor, for user rights validation")
-            @RequestParam(value = "username") String username,
+            @ApiParam(value = "The title of the post")
+            @PathVariable(value = "posttitle") String title,
+            @ApiParam(value = "The id of the post")
+            @PathVariable(value = "postid") Long postId,
             @ApiParam(value = "The new content of the post")
             @RequestParam(value = "content") String content,
-            @ApiParam(value = "The title of the post")
-            @RequestParam(value = "title") String title) {
+            @ApiParam(value = "The username of the redditor trying to edit the post")
+            @RequestParam(value = "username") String username) {
 
         Subreddit subreddit = subredditService.findByName(subredditName);
         if (subreddit == null) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Subreddit not found");
         }
 
-        Redditor redditor = redditorService.findByUsername(username);
-        if (redditor == null) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Redditor not found");
-        }
-
-        Post post = postService.findByPostTitleAndOwnerUsername(title, username);
-
+        Post post = postService.findPostById(postId);
         if (post == null) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Post not found");
         }
@@ -104,5 +105,40 @@ public class PostControllerImpl implements PostController {
         return ResponseEntity.status(HttpStatus.ACCEPTED).body(updatedPost);
     }
 
+    @GetMapping("/posts/search")
+    @Override
+    public ResponseEntity searchForPost(
+            @ApiParam(value = "The search term for finding a list of posts")
+            @RequestParam(value = "searchterm") String searchterm) {
+        List<Post> foundPosts = postService.findPost(searchterm);
 
+        if (foundPosts == null) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("No posts found containing the search term in their title or content");
+        }
+
+        return ResponseEntity.status(HttpStatus.FOUND).body(foundPosts);
+    }
+
+    @GetMapping("/subreddits/{subredditname}/posts/{postid}/{posttitle}")
+    @Override
+    public ResponseEntity getPost(
+            @ApiParam(value = "The name of the subreddit")
+            @PathVariable(value = "subredditname") String subredditName,
+            @ApiParam(value = "The id of the post")
+            @PathVariable(value = "postid") Long postId,
+            @ApiParam(value = "The title of the post")
+            @PathVariable(value = "posttitle") String postTitle) {
+
+        Subreddit subreddit = subredditService.findByName(subredditName);
+        if (subreddit == null) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Subreddit not found");
+        }
+
+        Post post = postService.findPostById(postId);
+        if (post == null) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("The post could not be found");
+        }
+
+        return ResponseEntity.status(HttpStatus.FOUND).body(post);
+    }
 }

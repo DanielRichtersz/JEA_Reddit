@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
 //Controller is same as Bean, endpoint layer
@@ -82,6 +83,7 @@ public class RedditorControllerImpl implements RedditorController {
     }
 
     @DeleteMapping("/redditors")
+    @Transactional
     @ApiOperation(value = "Delete a redditor by username")
     @Override
     public ResponseEntity deleteRedditor(@ApiParam(value = "The id of the to-be deleted redditor", required = true)

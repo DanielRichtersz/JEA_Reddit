@@ -1,10 +1,7 @@
 package danielrichtersz.models;
 
-import danielrichtersz.models.components.OwnerContainer;
-import danielrichtersz.models.components.ReactionContainer;
-import danielrichtersz.models.components.VoteContainer;
-
 import javax.persistence.*;
+import java.util.List;
 
 @Entity
 public class Post {
@@ -12,28 +9,31 @@ public class Post {
     @Id
     @GeneratedValue
     private Long id;
+
     private String title;
     private String content;
 
-    @OneToOne
-    private ReactionContainer reactionContainer;
+    @ManyToOne
+    private Redditor owner;
 
-    @OneToOne
-    private OwnerContainer ownerContainer;
+    @ManyToOne
+    private Subreddit subreddit;
 
-    @OneToOne
-    private VoteContainer voteContainer;
+    @OneToMany
+    private List<Comment> comments;
+
+    @OneToMany
+    private List<Vote> votes;
 
     public Post() {
 
     }
 
-    public Post(String title, String content, Redditor owner) {
+    public Post(String title, String content, Subreddit subreddit,Redditor owner) {
+        this.subreddit = subreddit;
+        this.owner = owner;
         this.title = title;
         this.content = content;
-        this.reactionContainer = new ReactionContainer();
-        this.ownerContainer = new OwnerContainer(owner);
-        this.voteContainer = new VoteContainer();
     }
 
     public String getTitle() {
@@ -44,16 +44,24 @@ public class Post {
         return this.content;
     }
 
-    public ReactionContainer getReactionContainer() {
-        return this.reactionContainer;
+    public Redditor getOwner() {
+        return this.owner;
     }
 
-    public OwnerContainer getOwnerContainer() {
-        return this.ownerContainer;
+    public List<Comment> getComments() {
+        return this.comments;
     }
 
-    public VoteContainer getVoteContainer() {
-        return this.voteContainer;
+    public List<Vote> getVotes() {
+        return this.votes;
+    }
+
+    public void addComment(Comment comment) {
+        comments.add(comment);
+    }
+
+    public void addVote(Vote vote) {
+        votes.add(vote);
     }
 
 }

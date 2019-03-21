@@ -1,10 +1,8 @@
 package danielrichtersz.models;
 
-import danielrichtersz.models.components.OwnerContainer;
 import danielrichtersz.models.enums.TypeVote;
 
 import javax.persistence.*;
-import java.lang.reflect.Type;
 
 @Entity
 public class Vote {
@@ -13,32 +11,25 @@ public class Vote {
     @GeneratedValue
     private Long id;
 
-    @ManyToOne
-    private Post post;
     private TypeVote typeVote;
 
-    @OneToOne
-    private OwnerContainer ownerContainer;
+    @ManyToOne
+    private Redditor owner;
 
     public Vote() {
 
     }
 
-    public Vote(Redditor owner, Post post, TypeVote typeVote) {
-        this.post = post;
+    public Vote(Redditor owner, TypeVote typeVote) {
         this.typeVote = typeVote;
-        this.ownerContainer = new OwnerContainer(owner);
-    }
-
-    public Post getPost() {
-        return this.post;
+        this.owner = owner;
     }
 
     public TypeVote getTypeVote() {
         return this.typeVote;
     }
 
-    public OwnerContainer getOwnerContainer() {
-        return this.ownerContainer;
+    public Redditor getOwner() {
+        return this.owner;
     }
 }

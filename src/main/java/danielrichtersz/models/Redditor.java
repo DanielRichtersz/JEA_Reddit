@@ -20,16 +20,13 @@ public class Redditor {
      * The TimeLine multireddit contains all the subreddits the user follows in one collection
      */
 
-    @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "owner", fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true)
     private List<MultiReddit> multiReddits;
 
-    @OneToMany
-    private List<Post> posts;
-
-    @OneToMany
+    @OneToMany(mappedBy = "owner")
     private List<Comment> comments;
 
-    @OneToMany
+    @OneToMany(mappedBy = "owner")
     private List<Vote> votes;
 
 
@@ -42,7 +39,7 @@ public class Redditor {
         this.password = password;
         this.multiReddits = new ArrayList<>();
         this.multiReddits.add(new MultiReddit(username + "Timeline", this));
-        this.posts = new ArrayList<>();
+        //this.posts = new ArrayList<>();
         this.comments = new ArrayList<>();
         this.votes = new ArrayList<>();
     }
@@ -55,9 +52,9 @@ public class Redditor {
         return this.multiReddits;
     }
 
-    public List<Post> getPosts() {
+    /*public List<Post> getPosts() {
         return this.posts;
-    }
+    }*/
 
     public List<Comment> getComments() {
         return this.comments;
@@ -78,6 +75,10 @@ public class Redditor {
     public boolean checkId(Long givenId) {
         return (this.id == givenId);
     }
+
+    /*public void addNewPost(Post post) {
+        this.posts.add(post);
+    }*/
 
     public void addNewMultiReddit(String name) {
         this.multiReddits.add(new MultiReddit(name, this));

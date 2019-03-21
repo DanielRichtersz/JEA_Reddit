@@ -13,7 +13,7 @@ public class Subreddit {
     private String name;
     private String description;
 
-    @OneToMany
+    @OneToMany(cascade = CascadeType.PERSIST, mappedBy = "subreddit")
     private List<Post> posts;
 
     @OneToMany (fetch = FetchType.LAZY)

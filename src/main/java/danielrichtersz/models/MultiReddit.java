@@ -1,9 +1,6 @@
 package danielrichtersz.models;
 
-import danielrichtersz.models.components.OwnerContainer;
-
 import javax.persistence.*;
-import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -15,7 +12,7 @@ public class MultiReddit {
     private String name;
 
     @ManyToOne (fetch = FetchType.EAGER)
-    private Redditor redditor;
+    private Redditor owner;
 
     @OneToMany
     private List<Subreddit> subreddits;
@@ -24,8 +21,8 @@ public class MultiReddit {
 
     }
 
-    public MultiReddit(String name, Redditor redditor) {
-        this.redditor = redditor;
+    public MultiReddit(String name, Redditor owner) {
+        this.owner = owner;
         this.name = name;
     }
 
@@ -51,6 +48,6 @@ public class MultiReddit {
 
     @Override
     public String toString() {
-        return String.format("MultiReddit[id=%d, name=%s, redditor=%s]", id, name, redditor.toString());
+        return String.format("MultiReddit[id=%d, name=%s, owner=%s]", id, name, owner.toString());
     }
 }

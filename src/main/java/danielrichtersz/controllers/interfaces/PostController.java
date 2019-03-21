@@ -24,4 +24,6 @@ public interface PostController {
 
     @DeleteMapping("/redditors/posts/{postid}")
     ResponseEntity deletePost(Long postId, String username);
+
+    ResponseEntity upvoteOrDownvotePost(String username, Long postId, String voteType);
 }

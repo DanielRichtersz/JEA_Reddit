@@ -4,9 +4,12 @@ import danielrichtersz.controllers.interfaces.PostController;
 import danielrichtersz.models.Post;
 import danielrichtersz.models.Redditor;
 import danielrichtersz.models.Subreddit;
+import danielrichtersz.models.Vote;
+import danielrichtersz.models.enums.TypeVote;
 import danielrichtersz.services.interfaces.PostService;
 import danielrichtersz.services.interfaces.RedditorService;
 import danielrichtersz.services.interfaces.SubredditService;
+import danielrichtersz.services.interfaces.VoteService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiParam;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,6 +18,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
+import java.lang.reflect.Type;
 import java.util.List;
 
 @Controller
@@ -30,6 +34,9 @@ public class PostControllerImpl implements PostController {
 
     @Autowired
     private PostService postService;
+
+    @Autowired
+    private VoteService voteService;
 
     @PostMapping("/subreddits/{subredditname}/posts")
     @Override
@@ -57,8 +64,7 @@ public class PostControllerImpl implements PostController {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("No valid title provided for the post, please provide a valid title");
         }
 
-        Post post = new Post(title, content, subreddit, redditor);
-        postService.createPost(post);
+        Post post = postService.createPost(new Post(title, content, subreddit, redditor));
 
         subreddit.addNewPost(post);
         subredditService.updateSubreddit(subreddit);
@@ -155,8 +161,7 @@ public class PostControllerImpl implements PostController {
 
         Post post = postService.findPostById(postId);
 
-        if (post.isDeleted())
-        {
+        if (post.isDeleted()) {
             return ResponseEntity.status(HttpStatus.CONFLICT).body("This post was already deleted");
         }
 
@@ -177,5 +182,65 @@ public class PostControllerImpl implements PostController {
         }
 
         return ResponseEntity.status(HttpStatus.ACCEPTED).body("Post was removed");
+    }
+
+    @PostMapping("/subreddits/{subredditname}/posts/{postid}/{title}/vote")
+    @Override
+    public ResponseEntity upvoteOrDownvotePost(
+            @ApiParam(value = "The username of the redditor")
+            @RequestParam(value = "username") String username,
+            @ApiParam(value = "The id of the post")
+            @PathVariable(value = "postid") Long postId,
+            @ApiParam(value = "The type of vote: 'up' or 'down'")
+            @RequestParam(value = "votetype") String voteType) {
+
+        Redditor redditor = redditorService.findByUsername(username);
+        if (redditor == null) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Redditor not found");
+        }
+
+        Post post = postService.findPostById(postId);
+        if (post.isDeleted()) {
+            return ResponseEntity.status(HttpStatus.CONFLICT).body("This post is deleted, no votes can be cast upon it");
+        }
+
+        if (post == null) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("The post could not be found");
+        }
+
+        //Existing vote?
+        Vote vote = voteService.getVote(post, redditor);
+
+        TypeVote typeVote;
+        if (voteType.equals("up")) {
+            typeVote = TypeVote.Upvote;
+        }
+        else if (voteType.equals("down")) {
+            typeVote = TypeVote.Downvote;
+        }
+        else if (voteType.equals("none")) {
+            typeVote = null;
+        }
+        else {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Problem casting vote");
+        }
+
+        //Updating vote or deleting vote?
+        //Update vote directly
+        if (vote != null) {
+            if (typeVote == null) {
+                voteService.deleteVote(vote);
+                return ResponseEntity.status(HttpStatus.ACCEPTED).body("Vote removed");
+            }
+            vote.setTypeVote(typeVote);
+            voteService.updateVote(vote);
+            return ResponseEntity.status(HttpStatus.ACCEPTED).body(voteService.updateVote(vote));
+        }
+
+        //Creating new vote
+        //Add to post and update post
+        Vote createdVote = voteService.createVote(new Vote(post, redditor, typeVote));
+
+        return ResponseEntity.status(HttpStatus.ACCEPTED).body(createdVote);
     }
 }

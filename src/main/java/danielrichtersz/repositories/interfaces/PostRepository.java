@@ -2,6 +2,7 @@ package danielrichtersz.repositories.interfaces;
 
 
 import danielrichtersz.models.Post;
+import danielrichtersz.models.Vote;
 import org.springframework.data.repository.CrudRepository;
 
 import java.util.List;

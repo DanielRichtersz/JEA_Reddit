@@ -10,7 +10,7 @@ public class Comment {
     @GeneratedValue
     private Long id;
 
-    private String comment;
+    private String content;
 
     @ManyToOne
     private Redditor owner;
@@ -18,20 +18,20 @@ public class Comment {
     @OneToMany
     private List<Comment> comments;
 
-    @OneToMany
+    @OneToMany(mappedBy = "comment")
     private List<Vote> votes;
 
     public Comment() {
 
     }
 
-    public Comment(String comment, Redditor owner) {
+    public Comment(String content, Redditor owner) {
         this.owner = owner;
-        this.comment = comment;
+        this.content = content;
     }
 
-    public String getComment() {
-        return this.comment;
+    public String getContent() {
+        return this.content;
     }
 
     public Redditor getOwner() {

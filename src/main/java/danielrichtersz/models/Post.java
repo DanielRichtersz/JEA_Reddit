@@ -23,7 +23,7 @@ public class Post {
     @OneToMany
     private List<Comment> comments;
 
-    @OneToMany
+    @OneToMany(mappedBy = "post")
     private List<Vote> votes;
 
     public Post() {

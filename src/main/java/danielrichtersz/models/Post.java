@@ -56,6 +56,10 @@ public class Post {
         return this.votes;
     }
 
+    public void setContent(String content) {
+        this.content = content;
+    }
+
     public void addComment(Comment comment) {
         comments.add(comment);
     }

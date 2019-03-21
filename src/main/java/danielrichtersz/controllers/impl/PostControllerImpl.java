@@ -12,10 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 
 @Controller
 @RequestMapping("/api")
@@ -32,7 +29,7 @@ public class PostControllerImpl implements PostController {
 
     @PostMapping("/subreddits/{subredditname}/posts")
     @Override
-    public ResponseEntity CreatePost(
+    public ResponseEntity createPost(
             @ApiParam(value = "The name of the subreddit")
             @PathVariable(value = "subredditname") String subredditName,
             @ApiParam(value = "The name of the redditor")
@@ -58,10 +55,54 @@ public class PostControllerImpl implements PostController {
 
         Post post = new Post(title, content, subreddit, redditor);
         postService.createPost(post);
-        
+
         subreddit.addNewPost(post);
         subredditService.updateSubreddit(subreddit);
 
         return ResponseEntity.status(HttpStatus.CREATED).body(post);
     }
+
+    @PutMapping("/subreddits/{subredditname}/posts")
+    @Override
+    public ResponseEntity editPost(
+            @ApiParam(value = "The name of the subreddit")
+            @PathVariable(value = "subredditname") String subredditName,
+            @ApiParam(value = "The username of the redditor, for user rights validation")
+            @RequestParam(value = "username") String username,
+            @ApiParam(value = "The new content of the post")
+            @RequestParam(value = "content") String content,
+            @ApiParam(value = "The title of the post")
+            @RequestParam(value = "title") String title) {
+
+        Subreddit subreddit = subredditService.findByName(subredditName);
+        if (subreddit == null) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Subreddit not found");
+        }
+
+        Redditor redditor = redditorService.findByUsername(username);
+        if (redditor == null) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Redditor not found");
+        }
+
+        Post post = postService.findByPostTitleAndOwnerUsername(title, username);
+
+        if (post == null) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Post not found");
+        }
+
+        if (!post.getOwner().getUsername().equals(username)) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("You do not have the rights to edit this post");
+        }
+
+        post.setContent(content);
+        Post updatedPost = postService.updatePost(post);
+
+        if (updatedPost == null) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Something went wrong while updating the post");
+        }
+
+        return ResponseEntity.status(HttpStatus.ACCEPTED).body(updatedPost);
+    }
+
+
 }

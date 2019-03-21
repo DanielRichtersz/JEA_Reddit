@@ -15,4 +15,16 @@ public class PostServiceImpl implements PostService {
     public Post createPost(Post post) {
         return postRepository.save(post);
     }
+
+    @Override
+    public Post findByPostTitleAndOwnerUsername(String title, String username) {
+        return postRepository.findByTitleAndOwnerUsername(title, username);
+    }
+
+    @Override
+    public Post updatePost(Post post) {
+        return postRepository.save(post);
+    }
+
+
 }

@@ -9,11 +9,13 @@ import org.junit.Before;
 import org.junit.Test;
 
 import static Hamcrest.PostTestResources.*;
+import static Hamcrest.PostTestResources.POST_TITLE;
 import static Hamcrest.RedditorTestResources.*;
-import static Hamcrest.SubredditTestResources.*;
+import static Hamcrest.SubredditTestResources.SUBREDDIT_DESCRIPTION;
+import static Hamcrest.SubredditTestResources.SUBREDDIT_NAME;
 import static io.restassured.RestAssured.given;
 
-public class PostEdit {
+public class PostActions {
 
     @Before
     public void setup() {
@@ -43,7 +45,7 @@ public class PostEdit {
     }
 
     @Test
-    public void whenEditingPost_EditingSuccesfull() {
+    public void whenVotingOnPost_VoteSuccesfull() {
         //Create post and get ID
         Response response = given().params("username", USERNAME, "title", POST_TITLE, "content", POST_CONTENT)
                 .when()
@@ -59,15 +61,30 @@ public class PostEdit {
 
         int id = jsonPathEvaluator.get("id");
 
-        given().params("content", NEW_POST_CONTENT, "username", USERNAME)
+        //Upvoting
+        given().params("votetype", VOTE_UP, "username", USERNAME)
                 .when()
-                .request("PUT", "/subreddits/" + SUBREDDIT_NAME + "/posts/" + id + "/" + POST_TITLE)
+                .request("POST", "/subreddits/" + SUBREDDIT_NAME + "/posts/" + id + "/" + POST_TITLE + "/vote")
+                .then()
+                .statusCode(202);
+
+        //Downvoting
+        given().params("votetype", VOTE_DOWN, "username", USERNAME)
+                .when()
+                .request("POST", "/subreddits/" + SUBREDDIT_NAME + "/posts/" + id + "/" + POST_TITLE + "/vote")
+                .then()
+                .statusCode(202);
+
+        //Removing vote
+        given().params("votetype", VOTE_NONE, "username", USERNAME)
+                .when()
+                .request("POST", "/subreddits/" + SUBREDDIT_NAME + "/posts/" + id + "/" + POST_TITLE + "/vote")
                 .then()
                 .statusCode(202);
     }
 
     @Test
-    public void whenEditingPost_SubredditNotFound() {
+    public void whenVotingOnPost_RedditorNotFound() {
         //Create post and get ID
         Response response = given().params("username", USERNAME, "title", POST_TITLE, "content", POST_CONTENT)
                 .when()
@@ -83,39 +100,33 @@ public class PostEdit {
 
         int id = jsonPathEvaluator.get("id");
 
-        given().params("content", NEW_POST_CONTENT, "username", USERNAME)
+        given().params("votetype", VOTE_UP, "username", INCORRECT_USERNAME)
                 .when()
-                .request("PUT", "/subreddits/" + INCORRECT_SUBREDDIT_NAME + "/posts/" + id + "/" + POST_TITLE)
+                .request("POST", "/subreddits/" + SUBREDDIT_NAME + "/posts/" + id + "/" + POST_TITLE + "/vote")
                 .then()
                 .statusCode(404);
     }
 
     @Test
-    public void whenEditingPost_PostNotFound() {
+    public void whenVotingOnPost_PostNotFound() {
         //Create post and get ID
-        Response response = given().params("username", USERNAME, "title", POST_TITLE, "content", POST_CONTENT)
+        given().params("username", USERNAME, "title", POST_TITLE, "content", POST_CONTENT)
                 .when()
                 .request("POST", "/subreddits/" + SUBREDDIT_NAME + "/posts")
                 .then()
-                .statusCode(201)
-                .extract()
-                .response();
-
-        ResponseBody body = response.getBody();
-
-        JsonPath jsonPathEvaluator = response.jsonPath();
+                .statusCode(201);
 
         int id = 999999;
 
-        given().params("content", NEW_POST_CONTENT, "username", USERNAME)
+        given().params("votetype", VOTE_UP, "username", USERNAME)
                 .when()
-                .request("PUT", "/subreddits/" + SUBREDDIT_NAME + "/posts/" + id + "/" + POST_TITLE)
+                .request("POST", "/subreddits/" + SUBREDDIT_NAME + "/posts/" + id + "/" + POST_TITLE + "/vote")
                 .then()
                 .statusCode(404);
     }
 
     @Test
-    public void whenEditingPost_PostWasDeleted() {
+    public void whenVotingOnPost_PostWasDeleted() {
         //Create post and get ID
         Response response = given().params("username", USERNAME, "title", POST_TITLE, "content", POST_CONTENT)
                 .when()
@@ -137,10 +148,34 @@ public class PostEdit {
                 .then()
                 .statusCode(202);
 
-        given().params("content", NEW_POST_CONTENT, "username", USERNAME)
+        given().params("votetype", VOTE_UP, "username", USERNAME)
                 .when()
-                .request("PUT", "/subreddits/" + SUBREDDIT_NAME + "/posts/" + id + "/" + POST_TITLE)
+                .request("POST", "/subreddits/" + SUBREDDIT_NAME + "/posts/" + id + "/" + POST_TITLE + "/vote")
                 .then()
-                .statusCode(403);
+                .statusCode(409);
+    }
+
+    @Test
+    public void whenVotingOnPost_IncorrectVote() {
+        //Create post and get ID
+        Response response = given().params("username", USERNAME, "title", POST_TITLE, "content", POST_CONTENT)
+                .when()
+                .request("POST", "/subreddits/" + SUBREDDIT_NAME + "/posts")
+                .then()
+                .statusCode(201)
+                .extract()
+                .response();
+
+        ResponseBody body = response.getBody();
+
+        JsonPath jsonPathEvaluator = response.jsonPath();
+
+        int id = jsonPathEvaluator.get("id");
+
+        given().params("votetype", INCORRECT_VOTE, "username", USERNAME)
+                .when()
+                .request("POST", "/subreddits/" + SUBREDDIT_NAME + "/posts/" + id + "/" + POST_TITLE + "/vote")
+                .then()
+                .statusCode(400);
     }
 }

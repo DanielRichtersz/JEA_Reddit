@@ -63,7 +63,7 @@ public class PostControllerImpl implements PostController {
         }
 
         //No valid title
-        if (title.equals("") || title.equals("[deleted]")) {
+        if (title.equals("") || title.equals("[deleted]") || content.equals("") || content.equals("[deleted]")) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("No valid title provided for the post, please provide a valid title");
         }
 
@@ -204,12 +204,13 @@ public class PostControllerImpl implements PostController {
         }
 
         Post post = postService.findPostById(postId);
-        if (post.isDeleted()) {
-            return ResponseEntity.status(HttpStatus.CONFLICT).body("This post is deleted, no votes can be cast upon it");
-        }
 
         if (post == null) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("The post could not be found");
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Post not found");
+        }
+
+        if (post.isDeleted()) {
+            return ResponseEntity.status(HttpStatus.CONFLICT).body("This post is deleted, no votes can be cast upon it");
         }
 
         //Existing vote?

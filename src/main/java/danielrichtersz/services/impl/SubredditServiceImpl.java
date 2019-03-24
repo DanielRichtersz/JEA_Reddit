@@ -27,4 +27,16 @@ public class SubredditServiceImpl implements SubredditService {
     public Subreddit updateSubreddit(Subreddit subreddit) {
         return subredditRepository.save(subreddit);
     }
+
+    @Override
+    public boolean deleteSubreddit(String subredditName, String username) {
+        try {
+            Subreddit subreddit = subredditRepository.findByName(subredditName);
+            subredditRepository.delete(subreddit);
+            return true;
+        }
+        catch (Exception e) {
+            return false;
+        }
+    }
 }

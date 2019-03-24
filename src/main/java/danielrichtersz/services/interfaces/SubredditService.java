@@ -9,4 +9,6 @@ public interface SubredditService {
     Subreddit findByName(String name);
 
     Subreddit updateSubreddit(Subreddit subreddit);
+
+    boolean deleteSubreddit(String subredditName, String username);
 }

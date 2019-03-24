@@ -61,7 +61,7 @@ public class SubredditControllerImpl implements SubredditController {
     public ResponseEntity editSubredditDescriptionBySubredditNameAndUsername(
             @ApiParam(value = "The name of the subreddit")
             @PathVariable(value = "subredditname") String subredditName,
-            @ApiParam(value = "The id of the user")
+            @ApiParam(value = "The username of the redditor")
             @RequestParam(value = "username") String username,
             @ApiParam(value = "The new description of the subreddit")
             @RequestParam(value = "description") String description) {
@@ -92,6 +92,38 @@ public class SubredditControllerImpl implements SubredditController {
         }
 
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("You do not have the correct user rights to edit this subreddit");
+    }
+
+    @DeleteMapping("/subreddits")
+    @Override
+    public ResponseEntity deleteSubreddit(@ApiParam(value = "The name of the subreddit")
+                                          @RequestParam(value = "subredditname") String subredditName,
+                                          @ApiParam(value = "The username of the redditor")
+                                          @RequestParam(value = "username") String username) {
+        Subreddit subreddit = subredditService.findByName(subredditName);
+        if (subreddit == null) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("The subreddit you tried to delete does not exist");
+        }
+
+        Redditor redditor = redditorService.findByUsername(username);
+        if (redditor == null) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("No redditor with this name could be found");
+        }
+
+        for (Redditor moderator : subreddit.getModerators()) {
+            if (moderator.getUsername().equals(username)) {
+                boolean deleted = subredditService.deleteSubreddit(subredditName, username);
+
+                if (deleted) {
+                    return ResponseEntity.status(HttpStatus.ACCEPTED).body("Subreddit was deleted");
+                }
+                else {
+                    return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Something went wrong while deleting the subreddit, please try again");
+                }
+            }
+        }
+
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("You are not allowed to delete this subreddit");
     }
 
 }

@@ -50,16 +50,19 @@ public class PostControllerImpl implements PostController {
             @ApiParam(value = "The content of the post")
             @RequestParam(value = "content") String content) {
 
+        //No valid subreddit in path
         Subreddit subreddit = subredditService.findByName(subredditName);
         if (subreddit == null) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Subreddit not found");
         }
 
+        //No valid redditor
         Redditor redditor = redditorService.findByUsername(username);
         if (redditor == null) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Redditor not found");
         }
 
+        //No valid title
         if (title.equals("") || title.equals("[deleted]")) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("No valid title provided for the post, please provide a valid title");
         }
@@ -100,9 +103,10 @@ public class PostControllerImpl implements PostController {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).body("This post was deleted");
         }
 
-        if (!post.getOwner().getUsername().equals(username)) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("You do not have the rights to edit this post");
-        }
+        //TODO: Authorization
+        //if (!post.getOwner().getUsername().equals(username)) {
+        //    return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("You do not have the rights to edit this post");
+        //}
 
         post.setContent(content);
         Post updatedPost = postService.updatePost(post);
@@ -161,18 +165,18 @@ public class PostControllerImpl implements PostController {
 
         Post post = postService.findPostById(postId);
 
-        if (post.isDeleted()) {
-            return ResponseEntity.status(HttpStatus.CONFLICT).body("This post was already deleted");
-        }
-
-
         if (post == null) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("The post could not be found");
         }
 
-        if (!post.getOwner().getUsername().equals(username)) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("You do not have the rights to delete this post");
+        if (post.isDeleted()) {
+            return ResponseEntity.status(HttpStatus.CONFLICT).body("This post was already deleted");
         }
+
+        //TODO: Authorization
+        //if (!post.getOwner().getUsername().equals(username)) {
+        //    return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("You do not have the rights to delete this post");
+        //}
 
         try {
             postService.deletePost(post);

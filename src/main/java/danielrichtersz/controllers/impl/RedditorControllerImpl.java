@@ -68,7 +68,7 @@ public class RedditorControllerImpl implements RedditorController {
         }
 
         if (!redditor.passwordIsValid(oldpassword)) {
-            return ResponseEntity.status(HttpStatus.FORBIDDEN).body("The provided current password did not match the password for this user");
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("The provided current password did not match the current password for this user");
         }
 
         redditor.setPassword(newpassword);
@@ -96,7 +96,7 @@ public class RedditorControllerImpl implements RedditorController {
         }
 
         if (!redditor.passwordIsValid(password)) {
-            return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Given password did not match the password for this Redditor");
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Given password did not match the password for this Redditor");
         }
 
         redditorService.deleteRedditor(username);

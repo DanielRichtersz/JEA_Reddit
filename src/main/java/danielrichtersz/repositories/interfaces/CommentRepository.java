@@ -1,4 +1,9 @@
 package danielrichtersz.repositories.interfaces;
 
-public class CommentRepository {
+import danielrichtersz.models.Comment;
+import danielrichtersz.models.Post;
+import org.springframework.data.repository.CrudRepository;
+
+public interface CommentRepository extends CrudRepository<Comment, Long> {
+    Comment getById(Long id);
 }

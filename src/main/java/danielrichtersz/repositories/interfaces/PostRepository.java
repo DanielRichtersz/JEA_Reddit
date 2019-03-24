@@ -1,4 +1,12 @@
 package danielrichtersz.repositories.interfaces;
 
-public class PostRepository {
+
+import danielrichtersz.models.Post;
+import danielrichtersz.models.Vote;
+import org.springframework.data.repository.CrudRepository;
+
+import java.util.List;
+
+public interface PostRepository extends CrudRepository<Post, Long> {
+    List<Post> findByTitleContainingOrContentContaining(String title, String content);
 }

@@ -1,52 +1,56 @@
 package danielrichtersz.models;
 
-import danielrichtersz.models.components.OwnerContainer;
-import danielrichtersz.models.components.ReactionContainer;
-import danielrichtersz.models.components.VoteContainer;
-
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.OneToOne;
+import javax.persistence.*;
+import java.util.List;
 
 @Entity
-public class Comment extends ReactionContainer {
+public class Comment {
+
     @Id
     @GeneratedValue
     private Long id;
 
-    private String comment;
+    private String content;
 
-    @OneToOne
-    private ReactionContainer reactionContainer;
+    @ManyToOne
+    private Redditor owner;
 
-    @OneToOne
-    private OwnerContainer ownerContainer;
+    @OneToMany
+    private List<Comment> comments;
 
-    @OneToOne
-    private VoteContainer voteContainer;
+    @OneToMany(mappedBy = "comment")
+    private List<Vote> votes;
 
     public Comment() {
 
     }
 
-    public Comment(String comment, Redditor owner) {
-        this.comment = comment;
-        this.reactionContainer = new ReactionContainer();
-        this.ownerContainer = new OwnerContainer(owner);
-        this.voteContainer = new VoteContainer();
+    public Comment(String content, Redditor owner) {
+        this.owner = owner;
+        this.content = content;
     }
 
-    public ReactionContainer getReactionContainer() {
-        return this.reactionContainer;
+    public String getContent() {
+        return this.content;
     }
 
-    public OwnerContainer getOwnerContainer() {
-        return this.ownerContainer;
+    public Redditor getOwner() {
+        return this.owner;
     }
 
-    public VoteContainer getVoteContainer() {
-        return this.voteContainer;
+    public List<Comment> getComments() {
+        return this.comments;
     }
 
+    public List<Vote> getVotes() {
+        return this.votes;
+    }
+
+    public void addComment(Comment comment) {
+        comments.add(comment);
+    }
+
+    public void addVote(Vote vote) {
+        votes.add(vote);
+    }
 }

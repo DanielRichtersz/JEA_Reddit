@@ -1,13 +1,7 @@
 package danielrichtersz.models;
 
-import danielrichtersz.models.components.OwnerContainer;
-import danielrichtersz.models.components.ReactionContainer;
-import danielrichtersz.models.components.VoteContainer;
-
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.OneToOne;
+import javax.persistence.*;
+import java.util.List;
 
 @Entity
 public class Post {
@@ -15,38 +9,78 @@ public class Post {
     @Id
     @GeneratedValue
     private Long id;
+
+    private String title;
     private String content;
+    private boolean deleted;
 
-    @OneToOne
-    private ReactionContainer reactionContainer;
+    @ManyToOne
+    private Redditor owner;
 
-    @OneToOne
-    private OwnerContainer ownerContainer;
+    @ManyToOne
+    private Subreddit subreddit;
 
-    @OneToOne
-    private VoteContainer voteContainer;
+    @OneToMany
+    private List<Comment> comments;
+
+    @OneToMany(mappedBy = "post")
+    private List<Vote> votes;
 
     public Post() {
 
     }
 
-    public Post(String content, Redditor owner) {
+    public Post(String title, String content, Subreddit subreddit,Redditor owner) {
+        this.subreddit = subreddit;
+        this.owner = owner;
+        this.title = title;
         this.content = content;
-        this.reactionContainer = new ReactionContainer();
-        this.ownerContainer = new OwnerContainer(owner);
-        this.voteContainer = new VoteContainer();
+        this.deleted = false;
     }
 
-    public ReactionContainer getReactionContainer() {
-        return this.reactionContainer;
+    public Long getId() {
+        return this.id;
     }
 
-    public OwnerContainer getOwnerContainer() {
-        return this.ownerContainer;
+    public String getTitle() {
+        return this.title;
     }
 
-    public VoteContainer getVoteContainer() {
-        return this.voteContainer;
+    public String getContent() {
+        return this.content;
+    }
+
+    public Redditor getOwner() {
+        return this.owner;
+    }
+
+    public List<Comment> getComments() {
+        return this.comments;
+    }
+
+    public List<Vote> getVotes() {
+        return this.votes;
+    }
+
+    public void setContent(String content) {
+        this.content = content;
+    }
+
+    public void addComment(Comment comment) {
+        comments.add(comment);
+    }
+
+    public void addVote(Vote vote) {
+        votes.add(vote);
+    }
+
+    public boolean isDeleted() {
+        return this.deleted;
+    }
+
+    public void delete() {
+        this.content = "[deleted]";
+        this.deleted = true;
     }
 
 }

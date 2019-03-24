@@ -4,7 +4,8 @@ import danielrichtersz.models.Redditor;
 
 import javax.persistence.*;
 
-@Entity
+@Deprecated
+//@Entity
 public class OwnerContainer {
 
     @Id

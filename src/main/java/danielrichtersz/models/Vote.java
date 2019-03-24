@@ -1,6 +1,6 @@
 package danielrichtersz.models;
 
-import danielrichtersz.models.components.OwnerContainer;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import danielrichtersz.models.enums.TypeVote;
 
 import javax.persistence.*;
@@ -12,28 +12,53 @@ public class Vote {
     @GeneratedValue
     private Long id;
 
-    @ManyToOne
-    private Post post;
     private TypeVote typeVote;
 
-    @OneToOne
-    private OwnerContainer ownerContainer;
+    @ManyToOne
+    @JsonIgnore
+    private Redditor owner;
+
+    @ManyToOne
+    @JsonIgnore
+    private Post post;
+
+    @ManyToOne
+    @JsonIgnore
+    private Comment comment;
 
     public Vote() {
 
     }
 
-    public Vote(Redditor owner, Post post, TypeVote typeVote) {
+    public Vote(Post post, Redditor owner, TypeVote typeVote) {
         this.post = post;
         this.typeVote = typeVote;
-        this.ownerContainer = new OwnerContainer(owner);
+        this.owner = owner;
     }
 
-    public TypeVote getVoteType() {
+    public Vote(Comment comment, Redditor owner, TypeVote typeVote) {
+        this.comment = comment;
+        this.typeVote = typeVote;
+        this.owner = owner;
+    }
+
+    public TypeVote getTypeVote() {
         return this.typeVote;
     }
 
-    public OwnerContainer getOwnerContainer() {
-        return this.ownerContainer;
+    public Redditor getOwner() {
+        return this.owner;
+    }
+
+    public Post getPost() {
+        return this.post;
+    }
+
+    public Comment getComment() {
+        return this.comment;
+    }
+
+    public void setTypeVote(TypeVote typeVote) {
+        this.typeVote = typeVote;
     }
 }

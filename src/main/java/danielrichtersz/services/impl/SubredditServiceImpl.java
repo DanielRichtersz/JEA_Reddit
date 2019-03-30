@@ -2,6 +2,7 @@ package danielrichtersz.services.impl;
 
 import danielrichtersz.models.Redditor;
 import danielrichtersz.models.Subreddit;
+import danielrichtersz.repositories.interfaces.RedditorRepository;
 import danielrichtersz.repositories.interfaces.SubredditRepository;
 import danielrichtersz.services.interfaces.SubredditService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,19 +14,18 @@ public class SubredditServiceImpl implements SubredditService {
     @Autowired
     private SubredditRepository subredditRepository;
 
+    @Autowired
+    private RedditorRepository redditorRepository;
+
     @Override
-    public Subreddit createSubreddit(String name, String description, Redditor owner) {
-        return subredditRepository.save(new Subreddit(name, description, owner));
+    public Subreddit createSubreddit(String name, String description, String username) {
+        Redditor redditor = redditorRepository.findByUsername(username);
+        return subredditRepository.save(new Subreddit(name, description, redditor));
     }
 
     @Override
     public Subreddit findByName(String name) {
         return subredditRepository.findByName(name);
-    }
-
-    @Override
-    public Subreddit updateSubreddit(Subreddit subreddit) {
-        return subredditRepository.save(subreddit);
     }
 
     @Override
@@ -38,5 +38,12 @@ public class SubredditServiceImpl implements SubredditService {
         catch (Exception e) {
             return false;
         }
+    }
+
+    @Override
+    public Subreddit updateSubreddit(String subredditName, String description) {
+        Subreddit subreddit = subredditRepository.findByName(subredditName);
+        subreddit.setDescription(description);
+        return subredditRepository.save(subreddit);
     }
 }

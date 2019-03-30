@@ -8,9 +8,9 @@ public interface RedditorService {
 
     Redditor createRedditor(String username, String password);
 
-    Redditor updateRedditor(Redditor redditor);
-
     void deleteRedditor(String username);
 
     Redditor findById(Long redditorId);
+
+    Redditor updateRedditor(String username, String newpassword);
 }

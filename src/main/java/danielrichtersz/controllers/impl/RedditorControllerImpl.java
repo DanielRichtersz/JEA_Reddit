@@ -71,9 +71,7 @@ public class RedditorControllerImpl implements RedditorController {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("The provided current password did not match the current password for this user");
         }
 
-        redditor.setPassword(newpassword);
-
-        Redditor editedRedditor = redditorService.updateRedditor(redditor);
+        Redditor editedRedditor = redditorService.updateRedditor(username, newpassword);
 
         if (editedRedditor == null) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Something went wrong while updating the redditor, please try again or contact customer support");

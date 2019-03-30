@@ -25,11 +25,6 @@ public class RedditorServiceImpl implements RedditorService {
     }
 
     @Override
-    public Redditor updateRedditor(Redditor redditor) {
-        return redditorRepository.save(redditor);
-    }
-
-    @Override
     public void deleteRedditor(String username) {
         redditorRepository.deleteByUsername(username);
     }
@@ -37,5 +32,12 @@ public class RedditorServiceImpl implements RedditorService {
     @Override
     public Redditor findById(Long redditorId) {
         return redditorRepository.findById(redditorId).orElse(null);
+    }
+
+    @Override
+    public Redditor updateRedditor(String username, String newpassword) {
+        Redditor redditor = redditorRepository.findByUsername(username);
+        redditor.setPassword(newpassword);
+        return redditorRepository.save(redditor);
     }
 }

@@ -8,17 +8,9 @@ import danielrichtersz.models.enums.TypeVote;
 
 public interface VoteService {
 
-    Vote updateVote(Vote vote);
+    Vote updateOrCreateVote(Long postId, String username, TypeVote typeVote);
 
-    Post upvotePost(Post post, Redditor redditor, TypeVote vote);
+    void deleteVote(Long postId, String username);
 
-     Comment upvoteComment(Comment comment, Redditor redditor, TypeVote vote);
-
-    Vote getVote(Post post, Redditor redditor);
-
-    Vote getVote(Comment comment, Redditor redditor);
-
-    void deleteVote(Vote vote);
-
-    Vote createVote(Vote vote);
+    Vote getVote(Long postId, String username);
 }

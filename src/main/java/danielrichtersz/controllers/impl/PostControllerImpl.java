@@ -18,7 +18,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
-import java.lang.reflect.Type;
 import java.util.List;
 
 @Controller
@@ -67,10 +66,7 @@ public class PostControllerImpl implements PostController {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("No valid title provided for the post, please provide a valid title");
         }
 
-        Post post = postService.createPost(new Post(title, content, subreddit, redditor));
-
-        subreddit.addNewPost(post);
-        subredditService.updateSubreddit(subreddit);
+        Post post = postService.createPost(title, content, subredditName, username);
 
         return ResponseEntity.status(HttpStatus.CREATED).body(post);
     }
@@ -108,8 +104,7 @@ public class PostControllerImpl implements PostController {
         //    return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("You do not have the rights to edit this post");
         //}
 
-        post.setContent(content);
-        Post updatedPost = postService.updatePost(post);
+        Post updatedPost = postService.updatePost(postId, content);
 
         if (updatedPost == null) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Something went wrong while updating the post");
@@ -179,7 +174,7 @@ public class PostControllerImpl implements PostController {
         //}
 
         try {
-            postService.deletePost(post);
+            postService.deletePost(postId);
         }
         catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e);
@@ -204,7 +199,6 @@ public class PostControllerImpl implements PostController {
         }
 
         Post post = postService.findPostById(postId);
-
         if (post == null) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Post not found");
         }
@@ -212,9 +206,6 @@ public class PostControllerImpl implements PostController {
         if (post.isDeleted()) {
             return ResponseEntity.status(HttpStatus.CONFLICT).body("This post is deleted, no votes can be cast upon it");
         }
-
-        //Existing vote?
-        Vote vote = voteService.getVote(post, redditor);
 
         TypeVote typeVote;
         if (voteType.equals("up")) {
@@ -230,21 +221,18 @@ public class PostControllerImpl implements PostController {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Problem casting vote");
         }
 
-        //Updating vote or deleting vote?
-        //Update vote directly
-        if (vote != null) {
+        //Updating vote or deleting vote? Only if the vote already exists
+        if (voteService.getVote(postId, username) != null) {
             if (typeVote == null) {
-                voteService.deleteVote(vote);
+                voteService.deleteVote(postId, username);
                 return ResponseEntity.status(HttpStatus.ACCEPTED).body("Vote removed");
             }
-            vote.setTypeVote(typeVote);
-            voteService.updateVote(vote);
-            return ResponseEntity.status(HttpStatus.ACCEPTED).body(voteService.updateVote(vote));
+            return ResponseEntity.status(HttpStatus.ACCEPTED).body(voteService.updateOrCreateVote(postId, username, typeVote));
         }
 
         //Creating new vote
         //Add to post and update post
-        Vote createdVote = voteService.createVote(new Vote(post, redditor, typeVote));
+        Vote createdVote = voteService.updateOrCreateVote(postId, username, typeVote);
 
         return ResponseEntity.status(HttpStatus.ACCEPTED).body(createdVote);
     }

@@ -4,11 +4,11 @@ import danielrichtersz.models.Redditor;
 import danielrichtersz.models.Subreddit;
 
 public interface SubredditService {
-    Subreddit createSubreddit(String name, String description, Redditor owner);
+    Subreddit createSubreddit(String name, String description, String username);
 
     Subreddit findByName(String name);
 
-    Subreddit updateSubreddit(Subreddit subreddit);
-
     boolean deleteSubreddit(String subredditName, String username);
+
+    Subreddit updateSubreddit(String subredditName, String description);
 }

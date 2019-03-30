@@ -33,13 +33,11 @@ public class SubredditControllerImpl implements SubredditController {
             return ResponseEntity.status(HttpStatus.CONFLICT).body("This subreddit already exists, try a different name");
         }
 
-        Redditor owner = redditorService.findByUsername(username);
-
-        if (owner == null) {
+        if (redditorService.findByUsername(username) == null) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Could not create subreddit, redditor not found");
         }
 
-        Subreddit newSubreddit = subredditService.createSubreddit(subredditName, description, owner);
+        Subreddit newSubreddit = subredditService.createSubreddit(subredditName, description, username);
 
         return ResponseEntity
                 .status(HttpStatus.CREATED)
@@ -72,16 +70,14 @@ public class SubredditControllerImpl implements SubredditController {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("The subreddit you tried to edit does not exist");
         }
 
-        Redditor redditor = redditorService.findByUsername(username);
-        if (redditor == null) {
+        if (redditorService.findByUsername(username) == null) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("No redditor with this name could be found");
         }
 
         for (Redditor moderator : subreddit.getModerators()) {
             if (moderator.getUsername().equals(username)) {
-                //TODO: Vraag docent: Is dit juiste manier van doen (description hier gezet ipv in service laag...)
-                subreddit.setDescription(description);
-                Subreddit updatedSubreddit = subredditService.updateSubreddit(subreddit);
+                Subreddit updatedSubreddit = subredditService.updateSubreddit(subredditName, description);
+
                 if (updatedSubreddit == null) {
                     return ResponseEntity
                             .status(HttpStatus.INTERNAL_SERVER_ERROR)
@@ -105,8 +101,7 @@ public class SubredditControllerImpl implements SubredditController {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("The subreddit you tried to delete does not exist");
         }
 
-        Redditor redditor = redditorService.findByUsername(username);
-        if (redditor == null) {
+        if (redditorService.findByUsername(username) == null) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("No redditor with this name could be found");
         }
 

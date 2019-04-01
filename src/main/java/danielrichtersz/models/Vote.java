@@ -20,24 +20,14 @@ public class Vote {
 
     @ManyToOne
     @JsonIgnore
-    private Post post;
-
-    @ManyToOne
-    @JsonIgnore
-    private Comment comment;
+    private Postable postable;
 
     public Vote() {
 
     }
 
-    public Vote(Post post, Redditor owner, TypeVote typeVote) {
-        this.post = post;
-        this.typeVote = typeVote;
-        this.owner = owner;
-    }
-
-    public Vote(Comment comment, Redditor owner, TypeVote typeVote) {
-        this.comment = comment;
+    public Vote(Postable postable, Redditor owner, TypeVote typeVote) {
+        this.postable = postable;
         this.typeVote = typeVote;
         this.owner = owner;
     }
@@ -50,12 +40,8 @@ public class Vote {
         return this.owner;
     }
 
-    public Post getPost() {
-        return this.post;
-    }
-
-    public Comment getComment() {
-        return this.comment;
+    public Postable getPostable() {
+        return this.postable;
     }
 
     public void setTypeVote(TypeVote typeVote) {

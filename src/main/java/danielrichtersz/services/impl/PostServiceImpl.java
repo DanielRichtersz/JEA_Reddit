@@ -25,10 +25,6 @@ public class PostServiceImpl implements PostService {
     @Autowired
     private SubredditRepository subredditRepository;
 
-    public Post createPost(Post post) {
-        return postRepository.save(post);
-    }
-
     @Override
     public Post createPost(String title, String content, String subredditName, String username) {
         Redditor redditor = redditorRepository.findByUsername(username);
@@ -39,6 +35,7 @@ public class PostServiceImpl implements PostService {
     @Override
     public Post updatePost(Long postId, String newContent) {
         Post post = postRepository.findById(postId).orElse(null);
+        postRepository.findById(postId);
 
         if (post == null) {
             return null;

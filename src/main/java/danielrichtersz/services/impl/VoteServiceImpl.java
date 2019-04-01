@@ -32,7 +32,7 @@ public class VoteServiceImpl implements VoteService {
     public Vote updateOrCreateVote(Long postId, String username, TypeVote typeVote) {
         Post post = postRepository.findById(postId).get();
         Redditor redditor = redditorRepository.findByUsername(username);
-        Vote vote = voteRepository.findByOwnerAndPost(redditor, post);
+        Vote vote = voteRepository.findByOwnerAndPostable(redditor, post);
         if (vote == null) {
             return voteRepository.save(new Vote(post, redditor, typeVote));
         }
@@ -44,7 +44,7 @@ public class VoteServiceImpl implements VoteService {
     public void deleteVote(Long postId, String username) {
         Post post = postRepository.findById(postId).get();
         Redditor redditor = redditorRepository.findByUsername(username);
-        Vote vote = voteRepository.findByOwnerAndPost(redditor, post);
+        Vote vote = voteRepository.findByOwnerAndPostable(redditor, post);
 
         if (vote != null) {
             voteRepository.delete(vote);
@@ -55,6 +55,6 @@ public class VoteServiceImpl implements VoteService {
     public Vote getVote(Long postId, String username) {
         Post post = postRepository.findById(postId).get();
         Redditor redditor = redditorRepository.findByUsername(username);
-        return voteRepository.findByOwnerAndPost(redditor, post);
+        return voteRepository.findByOwnerAndPostable(redditor, post);
     }
 }

@@ -59,26 +59,26 @@ public class PostActions {
 
         JsonPath jsonPathEvaluator = response.jsonPath();
 
-        int id = jsonPathEvaluator.get("id");
+        int postId = jsonPathEvaluator.get("id");
 
         //Upvoting
         given().params("votetype", VOTE_UP, "username", USERNAME)
                 .when()
-                .request("POST", "/subreddits/" + SUBREDDIT_NAME + "/posts/" + id + "/" + POST_TITLE + "/vote")
+                .request("POST", "/subreddits/" + SUBREDDIT_NAME + "/posts/" + postId + "/" + POST_TITLE + "/vote")
                 .then()
                 .statusCode(202);
 
         //Downvoting
         given().params("votetype", VOTE_DOWN, "username", USERNAME)
                 .when()
-                .request("POST", "/subreddits/" + SUBREDDIT_NAME + "/posts/" + id + "/" + POST_TITLE + "/vote")
+                .request("POST", "/subreddits/" + SUBREDDIT_NAME + "/posts/" + postId + "/" + POST_TITLE + "/vote")
                 .then()
                 .statusCode(202);
 
         //Removing vote
         given().params("votetype", VOTE_NONE, "username", USERNAME)
                 .when()
-                .request("POST", "/subreddits/" + SUBREDDIT_NAME + "/posts/" + id + "/" + POST_TITLE + "/vote")
+                .request("POST", "/subreddits/" + SUBREDDIT_NAME + "/posts/" + postId + "/" + POST_TITLE + "/vote")
                 .then()
                 .statusCode(202);
     }

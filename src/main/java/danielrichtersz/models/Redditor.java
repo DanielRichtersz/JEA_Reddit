@@ -84,6 +84,15 @@ public class Redditor {
         this.multiReddits.add(new MultiReddit(name, this));
     }
 
+    public void addSubredditToMultireddit(Subreddit subreddit, String multiredditName) {
+        for (MultiReddit multiReddit : this.multiReddits) {
+            if (multiReddit.getName() == multiredditName) {
+                if (!multiReddit.getSubreddits().contains(subreddit)) {
+                    multiReddit.addSubReddit(subreddit);
+                }
+            }
+        }
+    }
     @Override
     public String toString() {
         return String.format(

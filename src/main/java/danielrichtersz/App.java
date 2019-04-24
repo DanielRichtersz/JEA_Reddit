@@ -1,5 +1,6 @@
 package danielrichtersz;
 
+import danielrichtersz.models.MultiReddit;
 import danielrichtersz.models.Post;
 import danielrichtersz.models.Redditor;
 import danielrichtersz.models.Subreddit;
@@ -8,6 +9,7 @@ import danielrichtersz.repositories.interfaces.PostRepository;
 import danielrichtersz.repositories.interfaces.RedditorRepository;
 import danielrichtersz.controllers.interfaces.RedditorController;
 import danielrichtersz.repositories.interfaces.SubredditRepository;
+import danielrichtersz.services.interfaces.SubredditService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,10 +34,48 @@ public class App {
     public CommandLineRunner demo(RedditorRepository repository, MultiRedditRepository multiRedditRepository, SubredditRepository subredditRepository, PostRepository postRepository) {
         return (args -> {
             // save couple redditors
-            repository.save(new Redditor("username1", "password1"));
-            repository.save(new Redditor("username2", "password2"));
-            repository.save(new Redditor("username3", "password3"));
-            repository.save(new Redditor("username4", "password4"));
+            Redditor redditor1 = new Redditor("username1", "password1");
+            Redditor redditor2 = new Redditor("username2", "password2");
+            Redditor redditor3 = new Redditor("username3", "password3");
+            Redditor redditor4 = new Redditor("username4", "password4");
+            repository.save(redditor1);
+            repository.save(redditor2);
+            repository.save(redditor3);
+            repository.save(redditor4);
+
+
+            log.info("Creating Food subreddit");
+            log.info("------------------------------");
+            Subreddit foodSubreddit = new Subreddit("Food", "All things food!", redditor4);
+            subredditRepository.save(foodSubreddit);
+
+            foodSubreddit.addFollower(redditor1);
+            foodSubreddit.addFollower(redditor2);
+
+            subredditRepository.save(foodSubreddit);
+            log.info("");
+
+            log.info("Creating Sports subreddit");
+            log.info("------------------------------");
+            Subreddit sportsSubreddit = new Subreddit("Sports", "All things sport!", redditor3);
+            sportsSubreddit.addFollower(redditor1);
+            sportsSubreddit.addFollower(redditor2);
+            sportsSubreddit.addFollower(redditor3);
+            subredditRepository.save(sportsSubreddit);
+            log.info("");
+
+            log.info("Creating Gaming subreddit");
+            log.info("------------------------------");
+            Subreddit gamingSubreddit = new Subreddit("Gaming", "All things gaming!", redditor1);
+            gamingSubreddit.addFollower(redditor3);
+            gamingSubreddit.addFollower(redditor4);
+            subredditRepository.save(gamingSubreddit);
+            log.info("");
+
+            repository.save(redditor1);
+            repository.save(redditor2);
+            repository.save(redditor3);
+            repository.save(redditor4);
 
             // fetch all redditors
             log.info("Redditors found with findAll()");

@@ -2,7 +2,10 @@ package danielrichtersz.controllers.impl;
 
 import danielrichtersz.models.Redditor;
 import danielrichtersz.controllers.interfaces.RedditorController;
+import danielrichtersz.models.Subreddit;
+import danielrichtersz.models.TestRedditor;
 import danielrichtersz.services.interfaces.RedditorService;
+import danielrichtersz.services.interfaces.SubredditService;
 import io.swagger.annotations.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -11,14 +14,20 @@ import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 //Controller is same as Bean, endpoint layer
 @Controller
+@CrossOrigin(origins = "http://localhost:4200")
 @RequestMapping("/api")
 @Api(value = "Redditor Controller Implementation", description = "Operations pertaining to redditors through Spring Boot REST API")
 public class RedditorControllerImpl implements RedditorController {
 
     @Autowired
     private RedditorService redditorService;
+
+    @Autowired
+    private SubredditService subredditService;
 
     public RedditorControllerImpl() {
 
@@ -36,7 +45,7 @@ public class RedditorControllerImpl implements RedditorController {
             return ResponseEntity.status(HttpStatus.CONFLICT).body("This username is already in use, please try another username");
         }
         return ResponseEntity
-                .status(HttpStatus.CREATED)
+                .status(HttpStatus.OK)
                 .body(redditorService.createRedditor(username, password));
     }
 
@@ -47,9 +56,11 @@ public class RedditorControllerImpl implements RedditorController {
     })
     @Override
     public ResponseEntity getRedditorByUsername(@PathVariable(value = "name") String redditorUsername) {
-        Redditor found = redditorService.findByUsername(redditorUsername);
+            Redditor found = redditorService.findByUsername(redditorUsername);
         if (found != null) {
-            return ResponseEntity.status(HttpStatus.FOUND).body(found);
+            //For test
+            //TestRedditor testRedditor = new TestRedditor("TestName", "TestPassword", (long)1);
+            return ResponseEntity.status(HttpStatus.OK).body(found);
         }
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body("The given username did not match an existing user's username");
     }
@@ -77,7 +88,7 @@ public class RedditorControllerImpl implements RedditorController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Something went wrong while updating the redditor, please try again or contact customer support");
         }
 
-        return ResponseEntity.status(HttpStatus.ACCEPTED).body(editedRedditor);
+        return ResponseEntity.status(HttpStatus.OK).body(editedRedditor);
     }
 
     @DeleteMapping("/redditors")
@@ -98,6 +109,21 @@ public class RedditorControllerImpl implements RedditorController {
         }
 
         redditorService.deleteRedditor(username);
-        return ResponseEntity.status(HttpStatus.ACCEPTED).body("Redditor succesfully deleted");
+        return ResponseEntity.status(HttpStatus.OK).body("Redditor succesfully deleted");
+    }
+
+    @GetMapping("/redditors/{username}/timeline")
+    @ApiOperation(value = "Get the followed subreddits by username", response = Redditor.class)
+    @Override
+    public ResponseEntity getFollowedSubreddits(
+            @ApiParam(value = "The username of the redditor for whom the followed subreddits are being retrieved")
+            @PathVariable(value = "username") String username) {
+        List<Subreddit> followedSubreddits = subredditService.getFollowedSubreddits(username);
+
+        if (followedSubreddits == null || followedSubreddits.size() == 0) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("No followed subreddits could be found");
+        }
+
+        return ResponseEntity.status(HttpStatus.OK).body(followedSubreddits);
     }
 }

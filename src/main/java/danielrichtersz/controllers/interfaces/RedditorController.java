@@ -17,4 +17,6 @@ public interface RedditorController {
     ResponseEntity editRedditor(String username, String oldpassword, String newpassword);
 
     ResponseEntity deleteRedditor(String username, String password);
+
+    ResponseEntity getFollowedSubreddits(String username);
 }

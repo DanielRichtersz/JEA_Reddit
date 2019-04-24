@@ -19,7 +19,7 @@ public class Subreddit {
     @OneToMany (fetch = FetchType.LAZY)
     private List<Redditor> moderators;
 
-    @OneToMany
+    @ManyToMany
     private List<Redditor> followers;
 
     public Subreddit() {
@@ -53,6 +53,10 @@ public class Subreddit {
 
     public List<Redditor> getFollowers() {
         return this.followers;
+    }
+
+    public void addFollower(Redditor newFollower) {
+        this.followers.add(newFollower);
     }
 
     public void addNewPost(Post post) {

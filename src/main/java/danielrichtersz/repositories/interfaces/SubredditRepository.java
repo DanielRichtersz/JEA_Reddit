@@ -9,6 +9,7 @@ import java.util.List;
 
 public interface SubredditRepository extends CrudRepository<Subreddit, Long>
 {
-    Subreddit findByName(String name);
+    Subreddit getByName(String name);
     List<Subreddit> findAllByFollowersIsContaining(Redditor redditor);
+    List<Subreddit> findByNameContainingOrDescriptionContaining(String name, String description);
 }

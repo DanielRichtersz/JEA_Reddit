@@ -18,6 +18,13 @@ public interface SubredditController {
             String username,
             String description);
 
-    @DeleteMapping("/subreddits")
     ResponseEntity deleteSubreddit(String subredditName, String username);
+
+    ResponseEntity getSubredditPostsFromTo(
+            String subredditName,
+            int from,
+            int to);
+
+    ResponseEntity findSubreddit(
+            String searchTerm);
 }

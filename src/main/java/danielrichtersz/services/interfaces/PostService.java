@@ -10,9 +10,15 @@ public interface PostService {
 
     Post updatePost(Long postId, String newContent);
 
-    List<Post> findPost(String searchTerm);
+    List<Post> findPosts(String searchTerm);
 
     Post findPostById(Long postId);
 
     void deletePost(Long postId);
+
+    String getPostTitleFromUrl(String urlTitle);
+
+    int getAmountOfPosts(String username);
+
+    List<Post> getSubredditPostsFromTo(int from, int to, String subredditName);
 }

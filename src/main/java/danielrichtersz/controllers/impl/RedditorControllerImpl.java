@@ -4,6 +4,7 @@ import danielrichtersz.models.Redditor;
 import danielrichtersz.controllers.interfaces.RedditorController;
 import danielrichtersz.models.Subreddit;
 import danielrichtersz.models.TestRedditor;
+import danielrichtersz.services.interfaces.PostService;
 import danielrichtersz.services.interfaces.RedditorService;
 import danielrichtersz.services.interfaces.SubredditService;
 import io.swagger.annotations.*;
@@ -28,6 +29,9 @@ public class RedditorControllerImpl implements RedditorController {
 
     @Autowired
     private SubredditService subredditService;
+
+    @Autowired
+    private PostService postService;
 
     public RedditorControllerImpl() {
 

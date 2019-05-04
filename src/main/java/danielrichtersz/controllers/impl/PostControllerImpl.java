@@ -18,9 +18,11 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Controller
+@CrossOrigin(origins = "http://localhost:4200")
 @RequestMapping("/api")
 @Api(value = "Post Controller Implementation", description = "Operations pertaining to posts through Spring Boot REST API")
 public class PostControllerImpl implements PostController {
@@ -50,7 +52,7 @@ public class PostControllerImpl implements PostController {
             @RequestParam(value = "content") String content) {
 
         //No valid subreddit in path
-        Subreddit subreddit = subredditService.findByName(subredditName);
+        Subreddit subreddit = subredditService.getByName(subredditName);
         if (subreddit == null) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Subreddit not found");
         }
@@ -62,13 +64,13 @@ public class PostControllerImpl implements PostController {
         }
 
         //No valid title
-        if (title.equals("") || title.equals("[deleted]") || content.equals("") || content.equals("[deleted]")) {
+        if (title.equals("") || title.equals("[deleted]") ||     content.equals("[deleted]")) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("No valid title provided for the post, please provide a valid title");
         }
 
         Post post = postService.createPost(title, content, subredditName, username);
 
-        return ResponseEntity.status(HttpStatus.CREATED).body(post);
+        return ResponseEntity.status(HttpStatus.OK).body(post);
     }
 
     @PutMapping("/subreddits/{subredditname}/posts/{postid}/{posttitle}")
@@ -85,7 +87,7 @@ public class PostControllerImpl implements PostController {
             @ApiParam(value = "The username of the redditor trying to edit the post")
             @RequestParam(value = "username") String username) {
 
-        Subreddit subreddit = subredditService.findByName(subredditName);
+        Subreddit subreddit = subredditService.getByName(subredditName);
         if (subreddit == null) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Subreddit not found");
         }
@@ -110,21 +112,21 @@ public class PostControllerImpl implements PostController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Something went wrong while updating the post");
         }
 
-        return ResponseEntity.status(HttpStatus.ACCEPTED).body(updatedPost);
+        return ResponseEntity.status(HttpStatus.OK).body(updatedPost);
     }
 
-    @GetMapping("/posts/search")
+    @PostMapping("/search/posts")
     @Override
     public ResponseEntity searchForPost(
             @ApiParam(value = "The search term for finding a list of posts")
-            @RequestParam(value = "searchterm") String searchterm) {
-        List<Post> foundPosts = postService.findPost(searchterm);
+            @RequestParam(value = "searchTerm") String searchterm) {
+        List<Post> posts = postService.findPosts(searchterm);
 
-        if (foundPosts == null) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("No posts found containing the search term in their title or content");
+        if (posts == null) {
+            posts = new ArrayList<>();
         }
 
-        return ResponseEntity.status(HttpStatus.FOUND).body(foundPosts);
+        return ResponseEntity.status(HttpStatus.OK).body(posts);
     }
 
     @GetMapping("/subreddits/{subredditname}/posts/{postid}/{posttitle}")
@@ -137,7 +139,7 @@ public class PostControllerImpl implements PostController {
             @ApiParam(value = "The title of the post")
             @PathVariable(value = "posttitle") String postTitle) {
 
-        Subreddit subreddit = subredditService.findByName(subredditName);
+        Subreddit subreddit = subredditService.getByName(subredditName);
         if (subreddit == null) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Subreddit not found");
         }
@@ -147,7 +149,7 @@ public class PostControllerImpl implements PostController {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("The post could not be found");
         }
 
-        return ResponseEntity.status(HttpStatus.FOUND).body(post);
+        return ResponseEntity.status(HttpStatus.OK).body(post);
     }
 
     @DeleteMapping("/redditors/{username}/posts/{postid}")
@@ -180,7 +182,7 @@ public class PostControllerImpl implements PostController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e);
         }
 
-        return ResponseEntity.status(HttpStatus.ACCEPTED).body("Post was removed");
+        return ResponseEntity.status(HttpStatus.OK).body("Post was removed");
     }
 
     @PostMapping("/subreddits/{subredditname}/posts/{postid}/{title}/vote")
@@ -225,15 +227,15 @@ public class PostControllerImpl implements PostController {
         if (voteService.getVote(postId, username) != null) {
             if (typeVote == null) {
                 voteService.deleteVote(postId, username);
-                return ResponseEntity.status(HttpStatus.ACCEPTED).body("Vote removed");
+                return ResponseEntity.status(HttpStatus.OK).body("Vote removed");
             }
-            return ResponseEntity.status(HttpStatus.ACCEPTED).body(voteService.updateOrCreateVote(postId, username, typeVote));
+            return ResponseEntity.status(HttpStatus.OK).body(voteService.updateOrCreateVote(postId, username, typeVote));
         }
 
         //Creating new vote
         //Add to post and update post
         Vote createdVote = voteService.updateOrCreateVote(postId, username, typeVote);
 
-        return ResponseEntity.status(HttpStatus.ACCEPTED).body(createdVote);
+        return ResponseEntity.status(HttpStatus.OK).body(createdVote);
     }
 }

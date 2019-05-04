@@ -1,6 +1,5 @@
 package danielrichtersz;
 
-import danielrichtersz.models.MultiReddit;
 import danielrichtersz.models.Post;
 import danielrichtersz.models.Redditor;
 import danielrichtersz.models.Subreddit;
@@ -9,7 +8,6 @@ import danielrichtersz.repositories.interfaces.PostRepository;
 import danielrichtersz.repositories.interfaces.RedditorRepository;
 import danielrichtersz.controllers.interfaces.RedditorController;
 import danielrichtersz.repositories.interfaces.SubredditRepository;
-import danielrichtersz.services.interfaces.SubredditService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,6 +31,8 @@ public class App {
     @Bean
     public CommandLineRunner demo(RedditorRepository repository, MultiRedditRepository multiRedditRepository, SubredditRepository subredditRepository, PostRepository postRepository) {
         return (args -> {
+            log.info("Creating test redditors");
+            log.info("------------------------------");
             // save couple redditors
             Redditor redditor1 = new Redditor("username1", "password1");
             Redditor redditor2 = new Redditor("username2", "password2");
@@ -42,7 +42,7 @@ public class App {
             repository.save(redditor2);
             repository.save(redditor3);
             repository.save(redditor4);
-
+            log.info("");
 
             log.info("Creating Food subreddit");
             log.info("------------------------------");
@@ -77,6 +77,49 @@ public class App {
             repository.save(redditor3);
             repository.save(redditor4);
 
+            log.info("Creating test posts");
+            log.info("------------------------------");
+            Post sportsPost1 = new Post("Sports post 1 Title", "Sports post 1 Content", sportsSubreddit, redditor1);
+            Thread.sleep(5000);
+            Post sportsPost2 = new Post("Sports post 2 Title", "Sports post 2 Content", sportsSubreddit, redditor2);
+            Thread.sleep(1000);
+            Post sportsPost3 = new Post("Sports post 3 Title", "Sports post 3 Content", sportsSubreddit, redditor3);
+            Thread.sleep(2000);
+            Post sportsPost4 = new Post("Sports post 4 Title", "Sports post 4 Content", sportsSubreddit, redditor4);
+
+            Thread.sleep(3000);
+            Post foodPost1 = new Post("Food post 1 Title", "Food post 1 Content", foodSubreddit, redditor1);
+            Thread.sleep(1000);
+            Post foodPost2 = new Post("Food post 2 Title", "Food post 2 Content", foodSubreddit, redditor2);
+            Thread.sleep(1000);
+            Post foodPost3 = new Post("Food post 3 Title", "Food post 3 Content", foodSubreddit, redditor3);
+            Thread.sleep(1000);
+            Post foodPost4 = new Post("Food post 4 Title", "Food post 4 Content", foodSubreddit, redditor4);
+
+            Thread.sleep(1000);
+            Post gamingPost4 = new Post("Gaming post 4 Title", "Gaming post 4 Content", gamingSubreddit, redditor4);
+            Thread.sleep(1000);
+            Post gamingPost1 = new Post("Gaming post 1 Need for Speed Title", "Gaming post 1 Content", gamingSubreddit, redditor1);
+            Thread.sleep(1000);
+            Post gamingPost3 = new Post("Gaming post 3 Title", "Gaming Need for Speed post 3 Content", gamingSubreddit, redditor3);
+            Thread.sleep(1000);
+            Post gamingPost2 = new Post("Gaming post 2 Need for Speed Title", "Gaming Need for Speed post 2 Content", gamingSubreddit, redditor2);
+
+            postRepository.save(sportsPost1);
+            postRepository.save(sportsPost2);
+            postRepository.save(sportsPost3);
+            postRepository.save(sportsPost4);
+            postRepository.save(foodPost1);
+            postRepository.save(foodPost2);
+            postRepository.save(foodPost3);
+            postRepository.save(foodPost4);
+            postRepository.save(gamingPost1);
+            postRepository.save(gamingPost2);
+            postRepository.save(gamingPost3);
+            postRepository.save(gamingPost4);
+
+            log.info("");
+
             // fetch all redditors
             log.info("Redditors found with findAll()");
             log.info("------------------------------");
@@ -106,7 +149,7 @@ public class App {
             }
             log.info("");
 
-            log.info("MultiReddits found with findByName:");
+            log.info("MultiReddits found with getByName:");
             log.info("---------------------------------");
             multiRedditRepository.findByName("Timeline").forEach(multiReddit -> {
                 if (multiReddit != null) {
@@ -118,11 +161,11 @@ public class App {
             log.info("");
 
             log.info("Find subreddit");
-            Subreddit subreddit = subredditRepository.findByName("TestSubreddit");
+            Subreddit subreddit = subredditRepository.getByName("TestSubreddit");
             if (subreddit != null) {
                 log.info("Subreddit found: " + subreddit.toString());
 
-                log.info("MultiReddits found with findByName:");
+                log.info("MultiReddits found with getByName:");
                 log.info("---------------------------------");
                 multiRedditRepository.findByName("Timeline").forEach(multiReddit -> {
                     if (multiReddit != null) {
@@ -148,6 +191,7 @@ public class App {
             log.info("-------------------------------------------------------------");
             log.info("");
 
+            log.info("Service running");
 
         });
     }

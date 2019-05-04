@@ -1,8 +1,10 @@
 package danielrichtersz.controllers.impl;
 
 import danielrichtersz.controllers.interfaces.SubredditController;
+import danielrichtersz.models.Post;
 import danielrichtersz.models.Redditor;
 import danielrichtersz.models.Subreddit;
+import danielrichtersz.services.interfaces.PostService;
 import danielrichtersz.services.interfaces.RedditorService;
 import danielrichtersz.services.interfaces.SubredditService;
 import io.swagger.annotations.Api;
@@ -13,7 +15,11 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @Controller
+@CrossOrigin(origins = "http://localhost:4200")
 @RequestMapping("/api")
 @Api(value = "Subreddit Controller Implementation", description = "Operations pertaining to subreddits through Spring Boot REST API")
 public class SubredditControllerImpl implements SubredditController {
@@ -24,12 +30,15 @@ public class SubredditControllerImpl implements SubredditController {
     @Autowired
     private RedditorService redditorService;
 
+    @Autowired
+    private PostService postService;
+
     @PostMapping("/subreddits")
     @Override
     public ResponseEntity createSubreddit(@RequestParam(name = "name") String subredditName,
                                           @RequestParam(name = "description") String description,
                                           @RequestParam(name = "username") String username) {
-        if (subredditService.findByName(subredditName) != null) {
+        if (subredditService.getByName(subredditName) != null) {
             return ResponseEntity.status(HttpStatus.CONFLICT).body("This subreddit already exists, try a different name");
         }
 
@@ -40,18 +49,8 @@ public class SubredditControllerImpl implements SubredditController {
         Subreddit newSubreddit = subredditService.createSubreddit(subredditName, description, username);
 
         return ResponseEntity
-                .status(HttpStatus.CREATED)
+                .status(HttpStatus.OK)
                 .body(newSubreddit);
-    }
-
-    @GetMapping("/subreddits/{subredditname}")
-    @Override
-    public ResponseEntity getSubredditByName(@ApiParam(value = "The name of the subreddit") @PathVariable(value = "subredditname") String subredditName) {
-        Subreddit subreddit = subredditService.findByName(subredditName);
-        if (subreddit == null) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("No subreddit with the given name exists");
-        }
-        return ResponseEntity.status(HttpStatus.FOUND).body(subreddit);
     }
 
     @PutMapping("/subreddits/{subredditname}")
@@ -65,7 +64,7 @@ public class SubredditControllerImpl implements SubredditController {
             @RequestParam(value = "description") String description) {
 
         //The editing of the subreddit
-        Subreddit subreddit = subredditService.findByName(subredditName);
+        Subreddit subreddit = subredditService.getByName(subredditName);
         if (subreddit == null) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("The subreddit you tried to edit does not exist");
         }
@@ -83,7 +82,7 @@ public class SubredditControllerImpl implements SubredditController {
                             .status(HttpStatus.INTERNAL_SERVER_ERROR)
                             .body("Something went wrong while updating the subreddit, please try again or contact customer support");
                 }
-                return ResponseEntity.status(HttpStatus.ACCEPTED).body(updatedSubreddit);
+                return ResponseEntity.status(HttpStatus.OK).body(updatedSubreddit);
             }
         }
 
@@ -96,7 +95,7 @@ public class SubredditControllerImpl implements SubredditController {
                                           @RequestParam(value = "subredditname") String subredditName,
                                           @ApiParam(value = "The username of the redditor")
                                           @RequestParam(value = "username") String username) {
-        Subreddit subreddit = subredditService.findByName(subredditName);
+        Subreddit subreddit = subredditService.getByName(subredditName);
         if (subreddit == null) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("The subreddit you tried to delete does not exist");
         }
@@ -110,7 +109,7 @@ public class SubredditControllerImpl implements SubredditController {
                 boolean deleted = subredditService.deleteSubreddit(subredditName, username);
 
                 if (deleted) {
-                    return ResponseEntity.status(HttpStatus.ACCEPTED).body("Subreddit was deleted");
+                    return ResponseEntity.status(HttpStatus.OK).body("Subreddit was deleted");
                 }
                 else {
                     return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Something went wrong while deleting the subreddit, please try again");
@@ -121,4 +120,49 @@ public class SubredditControllerImpl implements SubredditController {
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("You are not allowed to delete this subreddit");
     }
 
+    @GetMapping("/subreddits/{subredditname}")
+    @Override
+    public ResponseEntity getSubredditByName(@ApiParam(value = "The name of the subreddit") @PathVariable(value = "subredditname") String subredditName) {
+        Subreddit subreddit = subredditService.getByName(subredditName);
+        if (subreddit == null) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("No subreddit with the given name exists");
+        }
+        return ResponseEntity.status(HttpStatus.OK).body(subreddit);
+    }
+
+    @GetMapping("/subreddits/{subredditname}/posts/{from}/to/{to}")
+    @Override
+    public ResponseEntity getSubredditPostsFromTo(
+            @ApiParam(value = "The name of the subreddit")
+            @PathVariable(value = "subredditname") String subredditName,
+            @ApiParam(value = "Start index value of current top posts to get")
+            @PathVariable(value = "from") int from,
+            @ApiParam(value = "End index value of current top posts to get")
+            @PathVariable(value = "to") int to)
+    {
+        Subreddit subreddit = subredditService.getByName(subredditName);
+        if (subreddit == null) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("No subreddit with the given name exists");
+        }
+
+        List<Post> posts = postService.getSubredditPostsFromTo(from, to, subredditName);
+        if (posts == null || posts.size() == 0) {
+            posts = new ArrayList<>();
+        }
+
+        return ResponseEntity.status(HttpStatus.OK).body(posts);
+    }
+
+    @PostMapping("/search/subreddits")
+    @Override
+    public ResponseEntity findSubreddit(
+            @ApiParam(value = "The searchterm to search for")
+            @RequestParam(value = "searchTerm") String searchTerm) {
+        List<Subreddit> subreddits = subredditService.findSubredditsByNameOrDescriptionContaining(searchTerm);
+
+        if (subreddits == null || subreddits.size() == 0) {
+            subreddits = new ArrayList<>();
+        }
+        return ResponseEntity.status(HttpStatus.OK).body(subreddits);
+    }
 }

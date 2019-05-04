@@ -2,6 +2,7 @@ package danielrichtersz.services.impl;
 
 import danielrichtersz.models.Redditor;
 import danielrichtersz.models.Subreddit;
+import danielrichtersz.repositories.interfaces.PostRepository;
 import danielrichtersz.repositories.interfaces.RedditorRepository;
 import danielrichtersz.repositories.interfaces.SubredditRepository;
 import danielrichtersz.services.interfaces.SubredditService;
@@ -19,6 +20,9 @@ public class SubredditServiceImpl implements SubredditService {
     @Autowired
     private RedditorRepository redditorRepository;
 
+    @Autowired
+    private PostRepository postRepository;
+
     @Override
     public Subreddit createSubreddit(String name, String description, String username) {
         Redditor redditor = redditorRepository.findByUsername(username);
@@ -26,14 +30,14 @@ public class SubredditServiceImpl implements SubredditService {
     }
 
     @Override
-    public Subreddit findByName(String name) {
-        return subredditRepository.findByName(name);
+    public Subreddit getByName(String name) {
+        return subredditRepository.getByName(name);
     }
 
     @Override
     public boolean deleteSubreddit(String subredditName, String username) {
         try {
-            Subreddit subreddit = subredditRepository.findByName(subredditName);
+            Subreddit subreddit = subredditRepository.getByName(subredditName);
             subredditRepository.delete(subreddit);
             return true;
         }
@@ -44,7 +48,7 @@ public class SubredditServiceImpl implements SubredditService {
 
     @Override
     public Subreddit updateSubreddit(String subredditName, String description) {
-        Subreddit subreddit = subredditRepository.findByName(subredditName);
+        Subreddit subreddit = subredditRepository.getByName(subredditName);
         subreddit.setDescription(description);
         return subredditRepository.save(subreddit);
     }
@@ -53,7 +57,7 @@ public class SubredditServiceImpl implements SubredditService {
     public boolean addFollower(String username, String subredditName) {
         try {
             Redditor redditor = redditorRepository.findByUsername(username);
-            Subreddit subreddit = subredditRepository.findByName(subredditName);
+            Subreddit subreddit = subredditRepository.getByName(subredditName);
 
             if (!subreddit.getFollowers().contains(redditor)) {
                 subreddit.addFollower(redditor);
@@ -70,7 +74,18 @@ public class SubredditServiceImpl implements SubredditService {
     public List<Subreddit> getFollowedSubreddits(String username) {
         try {
             Redditor redditor = redditorRepository.findByUsername(username);
-            return  subredditRepository.findAllByFollowersIsContaining(redditor);
+            return subredditRepository.findAllByFollowersIsContaining(redditor);
+        }
+        catch (Exception e) {
+            System.out.println(e);
+            return null;
+        }
+    }
+
+    @Override
+    public List<Subreddit> findSubredditsByNameOrDescriptionContaining(String searchTerm) {
+        try {
+            return subredditRepository.findByNameContainingOrDescriptionContaining(searchTerm, searchTerm);
         }
         catch (Exception e) {
             System.out.println(e);

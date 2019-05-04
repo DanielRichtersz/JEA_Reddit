@@ -4,6 +4,7 @@ import danielrichtersz.controllers.interfaces.CommentController;
 import danielrichtersz.models.*;
 import danielrichtersz.models.enums.TypeVote;
 import danielrichtersz.services.interfaces.*;
+import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiParam;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -14,6 +15,9 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @Controller
+@CrossOrigin(origins = "http://localhost:4200")
+@RequestMapping("/api")
+@Api(value = "Comment Controller Implementation", description = "Operations pertaining to comments through Spring Boot REST API")
 public class CommentControllerImpl implements CommentController {
 
     @Autowired
@@ -38,7 +42,7 @@ public class CommentControllerImpl implements CommentController {
                                             @RequestParam(value = "content") String content) {
 
         //No valid subreddit in path
-        Subreddit subreddit = subredditService.findByName(subredditName);
+        Subreddit subreddit = subredditService.getByName(subredditName);
         if (subreddit == null) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Subreddit not found");
         }
@@ -51,7 +55,7 @@ public class CommentControllerImpl implements CommentController {
 
         Comment comment = commentService.createComment(content, subredditName, username);
 
-        return ResponseEntity.status(HttpStatus.CREATED).body(comment);
+        return ResponseEntity.status(HttpStatus.OK).body(comment);
     }
 
     @PutMapping("/subreddits/{subredditname}/posts/{postid}/{posttitle}/comments/{commentid}")
@@ -66,7 +70,7 @@ public class CommentControllerImpl implements CommentController {
             @ApiParam(value = "The username of the redditor trying to edit the comment")
             @RequestParam(value = "username") String username) {
 
-        Subreddit subreddit = subredditService.findByName(subredditName);
+        Subreddit subreddit = subredditService.getByName(subredditName);
         if (subreddit == null) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Subreddit not found");
         }
@@ -91,7 +95,7 @@ public class CommentControllerImpl implements CommentController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Something went wrong while updating the comment");
         }
 
-        return ResponseEntity.status(HttpStatus.ACCEPTED).body(updatedComment);
+        return ResponseEntity.status(HttpStatus.OK).body(updatedComment);
     }
 
     @GetMapping("/comments/search")
@@ -105,7 +109,7 @@ public class CommentControllerImpl implements CommentController {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("No comments found containing the search term in their content");
         }
 
-        return ResponseEntity.status(HttpStatus.FOUND).body(foundComments);
+        return ResponseEntity.status(HttpStatus.OK).body(foundComments);
     }
 
     @GetMapping("/subreddits/{subredditname}/posts/{postid}/{posttitle}/comments/{commentid}")
@@ -116,7 +120,7 @@ public class CommentControllerImpl implements CommentController {
             @ApiParam(value = "The id of the comment")
             @PathVariable(value = "commentid") Long commentId) {
 
-        Subreddit subreddit = subredditService.findByName(subredditName);
+        Subreddit subreddit = subredditService.getByName(subredditName);
         if (subreddit == null) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Subreddit not found");
         }
@@ -126,7 +130,7 @@ public class CommentControllerImpl implements CommentController {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("The comment could not be found");
         }
 
-        return ResponseEntity.status(HttpStatus.FOUND).body(comment);
+        return ResponseEntity.status(HttpStatus.OK).body(comment);
     }
 
     @DeleteMapping("/redditors/{username}/posts/{postid}/{posttitle}/comments/{commentid}")
@@ -159,7 +163,7 @@ public class CommentControllerImpl implements CommentController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e);
         }
 
-        return ResponseEntity.status(HttpStatus.ACCEPTED).body("Comment was removed");
+        return ResponseEntity.status(HttpStatus.OK).body("Comment was removed");
     }
 
     @PostMapping("/subreddits/{subredditname}/posts/{postid}/{title}/comments/{commentid}/vote")
@@ -204,15 +208,15 @@ public class CommentControllerImpl implements CommentController {
         if (voteService.getVote(commentid, username) != null) {
             if (typeVote == null) {
                 voteService.deleteVote(commentid, username);
-                return ResponseEntity.status(HttpStatus.ACCEPTED).body("Vote removed");
+                return ResponseEntity.status(HttpStatus.OK).body("Vote removed");
             }
-            return ResponseEntity.status(HttpStatus.ACCEPTED).body(voteService.updateOrCreateVote(commentid, username, typeVote));
+            return ResponseEntity.status(HttpStatus.OK).body(voteService.updateOrCreateVote(commentid, username, typeVote));
         }
 
         //Creating new vote
         //Add to post and update post
         Vote createdVote = voteService.updateOrCreateVote(commentid, username, typeVote);
 
-        return ResponseEntity.status(HttpStatus.ACCEPTED).body(createdVote);
+        return ResponseEntity.status(HttpStatus.OK).body(createdVote);
     }
 }

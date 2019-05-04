@@ -16,7 +16,7 @@ public class Subreddit {
     @OneToMany(cascade = CascadeType.PERSIST, mappedBy = "subreddit", orphanRemoval = true)
     private List<Post> posts;
 
-    @OneToMany (fetch = FetchType.LAZY)
+    @ManyToMany (fetch = FetchType.LAZY)
     private List<Redditor> moderators;
 
     @ManyToMany

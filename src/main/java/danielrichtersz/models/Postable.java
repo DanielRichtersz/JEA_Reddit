@@ -1,6 +1,7 @@
 package danielrichtersz.models;
 
 import javax.persistence.*;
+import java.util.Date;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -15,6 +16,7 @@ public class Postable {
 
     private String content;
     private boolean deleted;
+    private Date dateCreated;
 
     @ManyToOne
     private Redditor owner;
@@ -35,6 +37,7 @@ public class Postable {
         this.owner = owner;
         this.comments = new ArrayList<>();
         this.votes = new ArrayList<>();
+        this.dateCreated = new Date();
     }
 
     public Redditor getOwner() {
@@ -76,5 +79,9 @@ public class Postable {
     public void delete() {
         this.content = "[deleted]";
         this.deleted = true;
+    }
+
+    public Date getDateCreated() {
+        return dateCreated;
     }
 }

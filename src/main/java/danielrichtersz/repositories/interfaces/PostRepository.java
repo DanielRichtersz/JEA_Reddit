@@ -10,7 +10,7 @@ import java.util.List;
 
 public interface PostRepository extends CrudRepository<Post, Long> {
 
-    //Post findById(Long postId);
+    Post getById(Long postId);
 
     List<Post> findByTitleContainingOrContentContaining(String title, String content);
 

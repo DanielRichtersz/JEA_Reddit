@@ -12,6 +12,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Controller
@@ -24,6 +25,9 @@ public class CommentControllerImpl implements CommentController {
     private CommentService commentService;
 
     @Autowired
+    private PostService postService;
+
+    @Autowired
     private SubredditService subredditService;
 
     @Autowired
@@ -32,28 +36,29 @@ public class CommentControllerImpl implements CommentController {
     @Autowired
     private VoteService voteService;
 
-    @PostMapping("/subreddits/{subredditname}/posts/{postid}/{posttitle}/comments")
+    @PostMapping("/comments")
     @Override
-    public ResponseEntity createComment(@ApiParam(value = "The name of the subreddit")
-                                            @PathVariable(value = "subredditname") String subredditName,
-                                        @ApiParam(value = "The name of the redditor")
+    public ResponseEntity createComment(@ApiParam(value = "The name of the redditor")
                                             @RequestParam(value = "username") String username,
                                         @ApiParam(value = "The content of the comment")
-                                            @RequestParam(value = "content") String content) {
-
-        //No valid subreddit in path
-        Subreddit subreddit = subredditService.getByName(subredditName);
-        if (subreddit == null) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Subreddit not found");
-        }
-
+                                            @RequestParam(value = "content") String content,
+                                        @ApiParam(value = "The id of the postable to which the comment was made")
+                                            @RequestParam(value = "postableId") Long postableId  ) {
         //No valid redditor
         Redditor redditor = redditorService.findByUsername(username);
         if (redditor == null) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Redditor not found");
         }
 
-        Comment comment = commentService.createComment(content, subredditName, username);
+        Postable postable = commentService.findCommentById(postableId);
+        if (postable == null) {
+            postable = postService.findPostById(postableId);
+            if (postable == null) {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Comment or post not found");
+            }
+        }
+
+        Comment comment = commentService.createComment(content, username, postableId);
 
         return ResponseEntity.status(HttpStatus.OK).body(comment);
     }
@@ -98,32 +103,25 @@ public class CommentControllerImpl implements CommentController {
         return ResponseEntity.status(HttpStatus.OK).body(updatedComment);
     }
 
-    @GetMapping("/comments/search")
+    @PostMapping("/search/comments")
     @Override
     public ResponseEntity searchForComment(
             @ApiParam(value = "The search term for finding a list of comments")
-            @RequestParam(value = "searchterm") String searchterm) {
+            @RequestParam(value = "searchTerm") String searchterm) {
         List<Comment> foundComments = commentService.findComment(searchterm);
 
         if (foundComments == null) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("No comments found containing the search term in their content");
+            foundComments = new ArrayList<>();
         }
 
         return ResponseEntity.status(HttpStatus.OK).body(foundComments);
     }
 
-    @GetMapping("/subreddits/{subredditname}/posts/{postid}/{posttitle}/comments/{commentid}")
+    @GetMapping("/comments")
     @Override
     public ResponseEntity getComment(
-            @ApiParam(value = "The name of the subreddit")
-            @PathVariable(value = "subredditname") String subredditName,
             @ApiParam(value = "The id of the comment")
             @PathVariable(value = "commentid") Long commentId) {
-
-        Subreddit subreddit = subredditService.getByName(subredditName);
-        if (subreddit == null) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Subreddit not found");
-        }
 
         Comment comment = commentService.findCommentById(commentId);
         if (comment == null) {
@@ -131,6 +129,44 @@ public class CommentControllerImpl implements CommentController {
         }
 
         return ResponseEntity.status(HttpStatus.OK).body(comment);
+    }
+
+    @GetMapping("subreddits/{subredditname}/posts/{postid}/{posttitle}/comments")
+    @Override
+    public ResponseEntity getCommentsFromPost(
+            @ApiParam(value = "The id of the post")
+            @PathVariable(value = "postid") Long postId)
+    {
+        Post post = postService.findPostById(postId);
+        if (post == null) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Post not found");
+        }
+
+        List<Comment> fComments = commentService.findCommentsByPostableId(postId);
+        if (fComments == null) {
+            fComments = new ArrayList<>();
+        }
+
+        return ResponseEntity.status(HttpStatus.OK).body(fComments);
+    }
+
+    @GetMapping("comments/{commentId}/comments")
+    @Override
+    public ResponseEntity getCommentsFromComment(
+            @ApiParam(value = "The id of the post")
+            @PathVariable(value = "commentId") Long commentId)
+    {
+        Comment comment = commentService.findCommentById(commentId);
+        if (comment == null) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Comment not found");
+        }
+
+        List<Comment> fComments = commentService.findCommentsByPostableId(commentId);
+        if (fComments == null) {
+            fComments = new ArrayList<>();
+        }
+
+        return ResponseEntity.status(HttpStatus.OK).body(fComments);
     }
 
     @DeleteMapping("/redditors/{username}/posts/{postid}/{posttitle}/comments/{commentid}")

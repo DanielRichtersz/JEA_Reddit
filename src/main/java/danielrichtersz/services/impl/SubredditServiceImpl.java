@@ -92,4 +92,35 @@ public class SubredditServiceImpl implements SubredditService {
             return null;
         }
     }
+
+    @Override
+    public boolean getFollowingSubreddit(String username, String subredditName) {
+        Redditor redditor = redditorRepository.findByUsername(username);
+        Subreddit subreddit = subredditRepository.getByName(subredditName);
+
+        if (subreddit.getFollowers().contains(redditor)) {
+            return true;
+        }
+        return false;
+    }
+
+    @Override
+    public boolean removeFollower(String username, String subredditName) {
+        try {
+            Redditor redditor = redditorRepository.findByUsername(username);
+            Subreddit subreddit = subredditRepository.getByName(subredditName);
+
+            if (subreddit.getFollowers().contains(redditor)) {
+                subreddit.getFollowers().remove(redditor);
+                subredditRepository.save(subreddit);
+            }
+
+            return true;
+        }
+        catch (Exception e) {
+            System.out.println(e);
+            return false;
+        }
+
+    }
 }

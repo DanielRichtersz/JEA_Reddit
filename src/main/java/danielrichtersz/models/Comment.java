@@ -1,11 +1,14 @@
 package danielrichtersz.models;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
 import javax.persistence.*;
 
 @Entity
 @DiscriminatorValue("0")
 public class Comment extends Postable{
 
+@JsonIgnoreProperties("comments")
     @ManyToOne
     private Postable parentPostable;
 

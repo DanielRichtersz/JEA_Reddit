@@ -132,17 +132,10 @@ public class PostControllerImpl implements PostController {
     @GetMapping("/subreddits/{subredditname}/posts/{postid}/{posttitle}")
     @Override
     public ResponseEntity getPost(
-            @ApiParam(value = "The name of the subreddit")
-            @PathVariable(value = "subredditname") String subredditName,
             @ApiParam(value = "The id of the post")
             @PathVariable(value = "postid") Long postId,
             @ApiParam(value = "The title of the post")
             @PathVariable(value = "posttitle") String postTitle) {
-
-        Subreddit subreddit = subredditService.getByName(subredditName);
-        if (subreddit == null) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Subreddit not found");
-        }
 
         Post post = postService.findPostById(postId);
         if (post == null) {

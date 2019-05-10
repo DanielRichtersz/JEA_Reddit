@@ -1,13 +1,16 @@
 package danielrichtersz.controllers.interfaces;
 
+import io.swagger.annotations.ApiParam;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 
 public interface CommentController {
     ResponseEntity createComment(
-            String subredditName,
             String username,
-            String content);
+            String content,
+            Long postableId);
 
     ResponseEntity editComment(
             String subredditName,
@@ -17,7 +20,15 @@ public interface CommentController {
 
     ResponseEntity searchForComment(String title);
 
-    ResponseEntity getComment(String subredditName, Long postId);
+    ResponseEntity getComment(
+            Long commentId);
+
+    ResponseEntity getCommentsFromPost(Long postId);
+
+    @GetMapping("comments/{commentId}/comments")
+    ResponseEntity getCommentsFromComment(
+            @ApiParam(value = "The id of the post")
+            @PathVariable(value = "commentId") Long commentId);
 
     ResponseEntity deleteComment(Long commentId, String username);
 

@@ -20,4 +20,8 @@ public interface SubredditService {
     List<Subreddit> getFollowedSubreddits(String username);
 
     List<Subreddit> findSubredditsByNameOrDescriptionContaining(String searchTerm);
+
+    boolean getFollowingSubreddit(String username, String subredditName);
+
+    boolean removeFollower(String username, String subredditName);
 }

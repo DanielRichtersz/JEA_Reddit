@@ -25,6 +25,13 @@ public interface SubredditController {
             int from,
             int to);
 
+    ResponseEntity subscribeToSubreddit(
+            String subredditName,
+            String username);
+
+    ResponseEntity getSubscribedToSubreddit(String subredditName,
+                                            String username);
+
     ResponseEntity findSubreddit(
             String searchTerm);
 }

@@ -138,8 +138,7 @@ public class SubredditControllerImpl implements SubredditController {
             @ApiParam(value = "Start index value of current top posts to get")
             @PathVariable(value = "from") int from,
             @ApiParam(value = "End index value of current top posts to get")
-            @PathVariable(value = "to") int to)
-    {
+            @PathVariable(value = "to") int to) {
         Subreddit subreddit = subredditService.getByName(subredditName);
         if (subreddit == null) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("No subreddit with the given name exists");
@@ -151,6 +150,59 @@ public class SubredditControllerImpl implements SubredditController {
         }
 
         return ResponseEntity.status(HttpStatus.OK).body(posts);
+    }
+
+    @PostMapping("/subreddits/{subredditname}/subscribe")
+    @Override
+    public ResponseEntity subscribeToSubreddit(
+            @ApiParam(value = "The name of the subreddit")
+            @PathVariable(value = "subredditname") String subredditName,
+            @ApiParam(value = "The name of the redditor to subscribe to this subreddit")
+            @RequestParam(name = "username") String username) {
+        Subreddit subreddit = subredditService.getByName(subredditName);
+        if (subreddit == null) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("The subreddit you tried to delete does not exist");
+        }
+
+        if (redditorService.findByUsername(username) == null) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("No redditor with this name could be found");
+        }
+
+        if (this.subredditService.getFollowingSubreddit(username, subredditName)) {
+            if (!this.subredditService.removeFollower(username, subredditName)) {
+                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Something went wrong while unsubscribing from subreddit, please try again");
+            }
+            return ResponseEntity.status(HttpStatus.OK).body(false);
+        }
+
+        if (!this.subredditService.addFollower(username, subredditName)) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Something went wrong while subscribing to subreddit, please try again");
+        }
+
+        return ResponseEntity.status(HttpStatus.OK).body(true);
+    }
+
+    @PostMapping("/subreddits/{subredditname}/getsubscribed")
+    @Override
+    public ResponseEntity getSubscribedToSubreddit(
+            @ApiParam(value = "The name of the subreddit")
+            @PathVariable(value = "subredditname") String subredditName,
+            @ApiParam(value = "The username of the redditor")
+            @RequestParam(name = "username") String username) {
+        Subreddit subreddit = subredditService.getByName(subredditName);
+        if (subreddit == null) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("The subreddit you tried to delete does not exist");
+        }
+
+        if (redditorService.findByUsername(username) == null) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("No redditor with this name could be found");
+        }
+
+        if (this.subredditService.getFollowingSubreddit(username, subredditName)) {
+            return ResponseEntity.status(HttpStatus.OK).body(true);
+        }
+
+        return ResponseEntity.status(HttpStatus.OK).body(false);
     }
 
     @PostMapping("/search/subreddits")

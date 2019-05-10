@@ -20,7 +20,7 @@ public interface PostController {
 
     ResponseEntity searchForPost(String title);
 
-    ResponseEntity getPost(String subredditName, Long postId, String postTitle);
+    ResponseEntity getPost(Long postId, String postTitle);
 
     @DeleteMapping("/redditors/posts/{postid}")
     ResponseEntity deletePost(Long postId, String username);

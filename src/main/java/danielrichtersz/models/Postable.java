@@ -1,5 +1,7 @@
 package danielrichtersz.models;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
 import javax.persistence.*;
 import java.util.Date;
 import java.util.ArrayList;
@@ -21,6 +23,7 @@ public class Postable {
     @ManyToOne
     private Redditor owner;
 
+    @JsonIgnoreProperties("parentPostable")
     @OneToMany(mappedBy = "parentPostable")
     private List<Comment> comments;
 

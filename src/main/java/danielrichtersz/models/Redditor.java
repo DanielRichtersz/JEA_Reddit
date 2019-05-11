@@ -15,6 +15,9 @@ public class Redditor {
     private String username;
 
     private String password;
+
+    private String role;
+
     /**
      * MultiReddit should always contain 1 multiReddit which is the TimeLine of the user
      * The TimeLine multireddit contains all the subreddits the user follows in one collection
@@ -39,7 +42,6 @@ public class Redditor {
         this.password = password;
         this.multiReddits = new ArrayList<>();
         this.multiReddits.add(new MultiReddit(username + "Timeline", this));
-        //this.posts = new ArrayList<>();
         this.comments = new ArrayList<>();
         this.votes = new ArrayList<>();
     }
@@ -47,41 +49,29 @@ public class Redditor {
     public String getUsername() {
         return this.username;
     }
-
     public List<MultiReddit> getMultiReddits() {
         return this.multiReddits;
     }
-
-    /*public List<Post> getPosts() {
-        return this.posts;
-    }*/
-
     public List<Comment> getComments() {
         return this.comments;
     }
-
     public List<Vote> getVotes() {
         return this.votes;
     }
-
     public boolean passwordIsValid(String givenPassword) {
         return this.password.equals(givenPassword);
     }
-
     public void setPassword(String password) {
         this.password = password;
     }
-
-    public boolean checkId(Long givenId) {
-        return (this.id == givenId);
-    }
-
-    /*public void addNewPost(Post post) {
-        this.posts.add(post);
-    }*/
-
     public void addNewMultiReddit(String name) {
         this.multiReddits.add(new MultiReddit(name, this));
+    }
+    public void setRole(String role) {
+        this.role = role;
+    }
+    public String getRole() {
+        return role;
     }
 
     public void addSubredditToMultireddit(Subreddit subreddit, String multiredditName) {
@@ -93,11 +83,16 @@ public class Redditor {
             }
         }
     }
+
     @Override
     public String toString() {
         return String.format(
                 "Redditor[id=%d, username=%s, password=%s]",
                 id, username, password
         );
+    }
+
+    public final long getRedditorId() {
+        return this.id;
     }
 }

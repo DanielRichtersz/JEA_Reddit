@@ -18,6 +18,8 @@ public class Redditor {
 
     private String role;
 
+    private String token;
+
     /**
      * MultiReddit should always contain 1 multiReddit which is the TimeLine of the user
      * The TimeLine multireddit contains all the subreddits the user follows in one collection
@@ -94,5 +96,13 @@ public class Redditor {
 
     public final long getRedditorId() {
         return this.id;
+    }
+
+    public String getToken() {
+        return token;
+    }
+
+    public void setToken(String token) {
+        this.token = token;
     }
 }

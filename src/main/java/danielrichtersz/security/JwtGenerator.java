@@ -19,7 +19,6 @@ public class JwtGenerator {
         claims.put("userId", String.valueOf(redditor.getRedditorId()));
         claims.put("role", redditor.getRole());
 
-
         return Jwts.builder()
                 .setClaims(claims)
                 .signWith(SignatureAlgorithm.HS512, "youtube")

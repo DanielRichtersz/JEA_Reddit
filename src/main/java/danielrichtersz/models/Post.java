@@ -1,5 +1,7 @@
 package danielrichtersz.models;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
 import javax.persistence.*;
 
 @Entity
@@ -26,7 +28,7 @@ public class Post extends Postable {
         return this.title;
     }
 
-    public Subreddit getSubreddit() {
-        return this.subreddit;
+    public String getSubredditName() {
+        return this.subreddit.getName();
     }
 }

@@ -60,7 +60,7 @@ public class RedditPostEndpoint {
         try {
             String username = users.get(session.getId());
             System.out.println("Post created by: " + username);
-            followers = subredditService.getFollowers(post.getSubreddit().getName());
+            followers = subredditService.getFollowers(post.getSubredditName());
 
             if (followers != null) {
                 followers.add(new Redditor(username, "password"));

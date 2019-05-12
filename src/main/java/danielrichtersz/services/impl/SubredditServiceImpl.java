@@ -94,6 +94,17 @@ public class SubredditServiceImpl implements SubredditService {
     }
 
     @Override
+    public List<Redditor> getFollowers(String subredditName) {
+        try {
+            return subredditRepository.findByName(subredditName);
+        }
+        catch (Exception e) {
+            System.out.println(e);
+            return null;
+        }
+    }
+
+    @Override
     public boolean getFollowingSubreddit(String username, String subredditName) {
         Redditor redditor = redditorRepository.findByUsername(username);
         Subreddit subreddit = subredditRepository.getByName(subredditName);

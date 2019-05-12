@@ -21,6 +21,8 @@ public interface SubredditService {
 
     List<Subreddit> findSubredditsByNameOrDescriptionContaining(String searchTerm);
 
+    List<Redditor> getFollowers(String subredditName);
+
     boolean getFollowingSubreddit(String username, String subredditName);
 
     boolean removeFollower(String username, String subredditName);

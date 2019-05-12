@@ -25,4 +25,8 @@ public class Post extends Postable {
     public String getTitle() {
         return this.title;
     }
+
+    public Subreddit getSubreddit() {
+        return this.subreddit;
+    }
 }

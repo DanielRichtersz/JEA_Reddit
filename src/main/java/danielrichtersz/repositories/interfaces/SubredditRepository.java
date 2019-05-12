@@ -12,4 +12,5 @@ public interface SubredditRepository extends CrudRepository<Subreddit, Long>
     Subreddit getByName(String name);
     List<Subreddit> findAllByFollowersIsContaining(Redditor redditor);
     List<Subreddit> findByNameContainingOrDescriptionContaining(String name, String description);
+    List<Redditor> findByName(String name);
 }
